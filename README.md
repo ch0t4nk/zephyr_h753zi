@@ -20,10 +20,24 @@ git submodule update --init --recursive
 Building locally (native_sim unit tests)
 
 1. Install Zephyr SDK and Python tools as described in Zephyr docs.
-2. Source Zephyr environment (adjust path if you keep Zephyr elsewhere):
+2. Source Zephyr environment (adjust path depending on your current working directory):
+
+From the repository root:
 
 ```bash
-. $PWD/zephyr/zephyr/zephyr-env.sh
+. ./zephyr/zephyr-env.sh
+```
+
+If you are inside the app folder (`apps/stm32h753zi_stepper`) use the relative path:
+
+```bash
+. ../../zephyr/zephyr-env.sh
+```
+
+Or source the absolute path to the script if you prefer:
+
+```bash
+. /full/path/to/zephyr/zephyr-env.sh
 ```
 
 3. Build & run unit tests (native_sim):
