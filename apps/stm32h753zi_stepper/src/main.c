@@ -44,16 +44,21 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 /* IHM02A1 control pins (Arduino D2/D3/D4 mapped on this board):
- *  - FLAG:  PG14, active low, input
- *  - BUSY:  PE13, active high, input
- *  - RESET: PE14, active low, output
+ * Expose these through device-tree where possible and use gpio_dt_spec
+ * helpers to avoid hard-coded controller lookups and pin numbers.
+ *
+ * Expected overlay nodes (examples):
+ *   ihm02a1-flag  -> GPIOG pin 14
+ *   ihm02a1-busy  -> GPIOE pin 13
+ *   ihm02a1-reset -> GPIOE pin 14
  */
-#define IHM_FLAG_PORT_NODE   DT_NODELABEL(gpiog)
-#define IHM_FLAG_PIN         14
-#define IHM_BUSY_PORT_NODE   DT_NODELABEL(gpioe)
-#define IHM_BUSY_PIN         13
-#define IHM_RESET_PORT_NODE  DT_NODELABEL(gpioe)
-#define IHM_RESET_PIN        14
+#define IHM_FLAG_NODE  DT_NODELABEL(ihm02a1_flag)
+#define IHM_BUSY_NODE  DT_NODELABEL(ihm02a1_busy)
+#define IHM_RESET_NODE DT_NODELABEL(ihm02a1_reset)
+
+static const struct gpio_dt_spec ihm_flag = GPIO_DT_SPEC_GET_OR(IHM_FLAG_NODE, gpios, { .port = NULL });
+static const struct gpio_dt_spec ihm_busy = GPIO_DT_SPEC_GET_OR(IHM_BUSY_NODE, gpios, { .port = NULL });
+static const struct gpio_dt_spec ihm_reset = GPIO_DT_SPEC_GET_OR(IHM_RESET_NODE, gpios, { .port = NULL });
 
 void heartbeat_thread(void)
 {
@@ -214,18 +219,24 @@ void main(void)
     
     LOG_INF("Application startup complete");
 
-    /* Configure control pins: reset as output, busy/flag as inputs */
-    const struct device *gpio_g = DEVICE_DT_GET(IHM_FLAG_PORT_NODE);
-    const struct device *gpio_e = DEVICE_DT_GET(IHM_BUSY_PORT_NODE);
-    if (device_is_ready(gpio_e)) {
-        gpio_pin_configure(gpio_e, IHM_RESET_PIN, GPIO_OUTPUT_ACTIVE);
+    /* Configure control pins via DT-backed gpio_dt_spec objects */
+    if (ihm_reset.port && device_is_ready(ihm_reset.port)) {
+        gpio_pin_configure_dt(&ihm_reset, GPIO_OUTPUT_ACTIVE);
         /* Deassert reset after short delay (active low) */
         k_sleep(K_MSEC(5));
-        gpio_pin_set(gpio_e, IHM_RESET_PIN, 1);
-        gpio_pin_configure(gpio_e, IHM_BUSY_PIN, GPIO_INPUT);
+        gpio_pin_set_dt(&ihm_reset, 1);
+    } else {
+        LOG_WRN("IHM RESET GPIO not present in DT or not ready");
     }
-    if (device_is_ready(gpio_g)) {
-        gpio_pin_configure(gpio_g, IHM_FLAG_PIN, GPIO_INPUT);
+    if (ihm_busy.port && device_is_ready(ihm_busy.port)) {
+        gpio_pin_configure_dt(&ihm_busy, GPIO_INPUT);
+    } else {
+        LOG_WRN("IHM BUSY GPIO not present in DT or not ready");
+    }
+    if (ihm_flag.port && device_is_ready(ihm_flag.port)) {
+        gpio_pin_configure_dt(&ihm_flag, GPIO_INPUT);
+    } else {
+        LOG_WRN("IHM FLAG GPIO not present in DT or not ready");
     }
     
     /* Configure SPI for L6470 daisy-chain */

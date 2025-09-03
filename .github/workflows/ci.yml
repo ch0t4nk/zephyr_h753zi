@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Zephyr SDK & tools (lightweight)
+        run: |
+          python -m pip install --user west
+          python -m pip install --user -r zephyr/scripts/requirements.txt || true
+      - name: Fetch west modules
+        run: |
+          export ZEPHYR_BASE=$(pwd)/zephyr/zephyr
+          west init -l . || true
+      - name: Build native_sim tests
+        run: |
+          . $HOME/.local/bin/activate 2>/dev/null || true
+          . ./zephyr/zephyr/zephyr-env.sh >/dev/null 2>&1 || true
+          west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_ci --pristine
+      - name: Run ctest
+        run: |
+          ctest --test-dir build/native_ci -V

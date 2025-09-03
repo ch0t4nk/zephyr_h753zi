@@ -24,6 +24,7 @@ target_sources(app PRIVATE
 		src/main.c
 		src/l6470.c
 		src/shell_stepper.c
+		src/hw_smoketest.c
 		src/stepper_models.c
 		${STEPPER_OUT}
 )
