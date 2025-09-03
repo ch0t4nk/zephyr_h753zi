@@ -1,0 +1,103 @@
+Start testing: Sep 03 16:01 EDT
+----------------------------------------------------------
+1/1 Testing: l6470_unit_tests
+1/1 Test: l6470_unit_tests
+Command: "/home/joeyw/zephyr-dev/build/native_unit/zephyr/zephyr.exe"
+Directory: /home/joeyw/zephyr-dev/build/native_unit
+"l6470_unit_tests" start time: Sep 03 16:01 EDT
+Output:
+----------------------------------------------------------
+*** Booting Zephyr OS build v4.2.0-2572-g04dfa77d372d ***
+Running TESTSUITE l6470_codec
+===================================================================
+START - test_build_get_status_tx_and_parse
+ PASS - test_build_get_status_tx_and_parse in 0.000 seconds
+===================================================================
+START - test_pack_move_frame_dev1
+ PASS - test_pack_move_frame_dev1 in 0.000 seconds
+===================================================================
+START - test_pack_run_frame_dev0
+ PASS - test_pack_run_frame_dev0 in 0.000 seconds
+===================================================================
+TESTSUITE l6470_codec succeeded
+Running TESTSUITE l6470_limits
+===================================================================
+START - test_move_rejects_too_many_steps
+[00:00:00.000,000] [1;33m<wrn> l6470: Attempt to move while power disabled[0m
+ PASS - test_move_rejects_too_many_steps in 0.000 seconds
+===================================================================
+START - test_run_rejects_high_speed
+[00:00:00.000,000] [1;33m<wrn> l6470: Attempt to run while power disabled[0m
+ PASS - test_run_rejects_high_speed in 0.000 seconds
+===================================================================
+TESTSUITE l6470_limits succeeded
+Running TESTSUITE l6470_strict
+===================================================================
+START - test_move_frame_bytes
+ PASS - test_move_frame_bytes in 0.000 seconds
+===================================================================
+START - test_run_frame_bytes
+ PASS - test_run_frame_bytes in 0.000 seconds
+===================================================================
+TESTSUITE l6470_strict succeeded
+Running TESTSUITE power_control_tests
+===================================================================
+START - test_power_state_hooks
+ PASS - test_power_state_hooks in 0.000 seconds
+===================================================================
+TESTSUITE power_control_tests succeeded
+Running TESTSUITE stepper_models
+===================================================================
+START - test_persist_active
+[00:00:00.000,000] [0m<inf> l6470: Active model for axis 1 set to 17HS3001-20B[0m
+[00:00:00.000,000] [1;31m<err> l6470: Failed to persist active model indices: -2[0m
+[00:00:00.000,000] [1;31m<err> l6470: Failed to persist active model indices: -2[0m
+ PASS - test_persist_active in 0.000 seconds
+===================================================================
+START - test_switch_and_enforce
+[00:00:00.000,000] [0m<inf> l6470: Active model for axis 0 set to 17HS3001-20B[0m
+[00:00:00.000,000] [1;31m<err> l6470: Failed to persist active model indices: -2[0m
+[00:00:00.000,000] [1;31m<err> l6470: Requested speed 2200 exceeds model max 1200[0m
+[00:00:00.000,000] [0m<inf> l6470: Active model for axis 0 set to NEMA23-HighTorque[0m
+[00:00:00.000,000] [1;31m<err> l6470: Failed to persist active model indices: -2[0m
+[00:00:00.000,000] [1;31m<err> l6470: Requested speed 3000 exceeds model max 2000[0m
+[00:00:00.000,000] [0m<inf> l6470: RUN cmd sent to dev 0 dir=0 speed=1999[0m
+ PASS - test_switch_and_enforce in 0.000 seconds
+===================================================================
+TESTSUITE stepper_models succeeded
+
+------ TESTSUITE SUMMARY START ------
+
+SUITE PASS - 100.00% [l6470_codec]: pass = 3, fail = 0, skip = 0, total = 3 duration = 0.000 seconds
+ - PASS - [l6470_codec.test_build_get_status_tx_and_parse] duration = 0.000 seconds
+ - PASS - [l6470_codec.test_pack_move_frame_dev1] duration = 0.000 seconds
+ - PASS - [l6470_codec.test_pack_run_frame_dev0] duration = 0.000 seconds
+
+SUITE PASS - 100.00% [l6470_limits]: pass = 2, fail = 0, skip = 0, total = 2 duration = 0.000 seconds
+ - PASS - [l6470_limits.test_move_rejects_too_many_steps] duration = 0.000 seconds
+ - PASS - [l6470_limits.test_run_rejects_high_speed] duration = 0.000 seconds
+
+SUITE PASS - 100.00% [l6470_strict]: pass = 2, fail = 0, skip = 0, total = 2 duration = 0.000 seconds
+ - PASS - [l6470_strict.test_move_frame_bytes] duration = 0.000 seconds
+ - PASS - [l6470_strict.test_run_frame_bytes] duration = 0.000 seconds
+
+SUITE PASS - 100.00% [power_control_tests]: pass = 1, fail = 0, skip = 0, total = 1 duration = 0.000 seconds
+ - PASS - [power_control_tests.test_power_state_hooks] duration = 0.000 seconds
+
+SUITE PASS - 100.00% [stepper_models]: pass = 2, fail = 0, skip = 0, total = 2 duration = 0.000 seconds
+ - PASS - [stepper_models.test_persist_active] duration = 0.000 seconds
+ - PASS - [stepper_models.test_switch_and_enforce] duration = 0.000 seconds
+
+------ TESTSUITE SUMMARY END ------
+
+===================================================================
+PROJECT EXECUTION SUCCESSFUL
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"l6470_unit_tests" end time: Sep 03 16:01 EDT
+"l6470_unit_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 03 16:01 EDT

@@ -1,0 +1,1260 @@
+
+
+
+Introduction
+The STM32H7 Nucleo-144 boards, based on the MB1364 reference board (NUCLEO- H723ZG, NUCLEO-H743ZI (order code NUCLEO-H743ZI2), and NUCLEO-H753ZI),
+provide an affordable and flexible way for users to try out new concepts and build prototypes, by choosing from the various combinations of performance and power consumption features provided by the STM32H7 series microcontroller. The ST Zio
+connector, which extends the ARDUINO(r) Uno V3 connectivity, and the ST morpho headers
+provide an easy means of expanding the functionality of the Nucleo open development platform with a wide choice of specialized shields. The STM32H7 Nucleo-144 boards do not require any separate probe as they integrate the STLINK-V3E debugger/programmer. The STM32H7 Nucleo-144 boards come with comprehensive free software libraries and examples available with the STM32Cube MCU Package.
+Note:	For NUCLEO-H743ZI (STM32H7 Nucleo-144 (MB1137) - order code NUCLEO-H743ZI),
+refer to UM1974.
+
+Pictures are not contractual.
+
+
+
+October 2023	UM2407 Rev 4	1/49
+
+
+Contents
+1 Features	6
+2 Ordering information	7
+2.1 Codification	7
+3 Development environment	8
+3.1 System requirements	8
+3.2 Development toolchains	8
+3.3 Demonstration software	8
+4 Conventions	9
+5 Quick start	10
+5.1 Getting started	10
+6 Hardware layout and configuration	11
+6.1 Nucleo-144 board layout	12
+6.2 Mechanical drawing	14
+6.3 Embedded STLINK-V3E	16
+6.3.1 Drivers	16
+6.3.2 STLINK-V3E firmware upgrade	17
+6.3.3 Using an external debug tool to program and debug the on-board STM32H7	17
+6.4 Power supply	19
+6.4.1 Power supply input from STLINK-V3E USB connector (default setting) 19
+6.4.2 External power supply input from VIN (7 to 12 V, 800 mA max)	20
+6.4.3 External power supply input 5V_EXT (5 V, 500 mA max)	21
+6.4.4 External power supply input from a USB charger (5 V)	22
+6.4.5 External power supply input from 3V3_EXT (3.3 V)	22
+6.4.6 Debugging while using VIN or EXT as an external power supply	23
+6.5 Clock sources	24
+6.5.1 HSE clock (high-speed external clock)	24
+6.5.2 LSE clock (low-speed external clock) - 32.768 kHz	25
+6.6 Board functions	25
+
+6.6.4 Current consumption measurement (IDD)	26
+6.6.5 Virtual COM port (VCP): LPUART/USART	26
+6.6.6 USB OTG_FS	27
+6.6.7 Ethernet	28
+6.7 Solder bridges and jumpers	29
+
+
+7Boardconnectors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .347.1STLINK-V3E USB Micro-B connector (CN1) . . . . . . . . . . . . . . . . . . . . . .347.2USB OTG_FS connector (CN13) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .347.3Ethernet RJ45 connector (CN14) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .35
+8
+Extension connectors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+368.1	ST Zio connectors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .368.2	ST morpho connector . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .419Nucleo-144 boards (MB1364) information  . . . . . . . . . . . . . . . . . . . . . .439.1	Product marking . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .439.2	Nucleo-144 boards (MB1364) product history . . . . . . . . . . . . . . . . . . . . .449.3	Board revision history . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .4510Federal Communications Commission (FCC) and
+ISED Canada Compliance Statements . . . . . . . . . . . . . . . . . . . . . . . . .
+4610.1	FCC Compliance Statement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .4610.2	ISED Compliance Statement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .47
+Revision history	48
+
+
+List of tables
+Table 1.	Ordering information	7
+Table 2.	Codification explanation	7
+Table 3.	ON/OFF conventions	9
+Table 4.	Jumper configuration	10
+Table 5.	MIPI-10 debug connector (CN5)	18
+Table 6.	External power sources: VIN (7 to 12 V)	21
+Table 7.	External power sources: 5V_EXT	21
+Table 8.	External power sources: CHGR (5 V)	22
+Table 9.	External power sources: 3V3_EXT (3.3 V)	23
+Table 10.	USART3 connection	27
+Table 11.	LPUART1 connection	27
+Table 12.	USB pin configuration	28
+Table 13.	Ethernet pin configuration	28
+Table 14.	Solder bridge and jumper configuration	29
+Table 15.	USB Micro-B connector (CN1) pinout	34
+Table 16.	USB OTG_FS Micro-AB connector (CN13) pinout	34
+Table 17.	Ethernet RJ45 connector (CN14) pinout	35
+Table 18.	ZIO connector (CN7) pinout	38
+Table 19.	ZIO connector (CN8) pinout	38
+Table 20.	ZIO connector (CN9) pinout	39
+Table 21.	ZIO connector (CN10) pinout	40
+Table 22.	Pin assignment of the ST morpho connector	41
+Table 23.	Product history	44
+Table 24.	Board revision history	45
+Table 25.	Document revision history	48
+
+List of figures
+
+Figure 1.	Nucleo-144 board (top view)	1
+Figure 2.	Nucleo-144 board (bottom view)	1
+Figure 3.	Hardware block diagram	11
+Figure 4.	Nucleo-144 board top layout	12
+Figure 5.	Nucleo-144 bottom layout	13
+Figure 6.	Nucleo-144 board mechanical drawing in millimeters	14
+Figure 7.	Nucleo-144 board mechanical drawing in mils	15
+Figure 8.	USB composite device	17
+Figure 9.	Connecting an external debug tool to program the on-board STM32H7	18
+Figure 10.	Power supply input from STLINK-V3E USB connector with PC (5 V, 500 mA max)	20
+Figure 11.	Power supply input from VIN (7 to 12 V, 800 mA max)	21
+Figure 12.	Power supply input from 5V_EXT (5 V, 500 mA max)	22
+Figure 13.	Power supply input from STLINK-V3E USB connector with a USB charger (5 V)	22
+Figure 14.	Power supply input from 3V3_EXT (3.3 V)	23
+Figure 15.	Ethernet RJ45 connector (CN14) front view	35
+Figure 16.	NUCLEOH7 Nucleo-144 board	36
+
+
+
+
+
+The STM32H7 Nucleo-144 boards offer the following features:
+* STM32H7 Arm(r)(a) Cortex(r) core-based microcontroller in an LQFP144 package
+* Ethernet compliant with IEEE-802.3-2002 (depending on STM32H7 support)
+* USB OTG full-speed
+* 3 user LEDs
+* 2 push-buttons: USER and RESET
+* LSE crystal:
+- 32.768 kHz crystal oscillator
+* Board connectors:
+- USB with Micro-AB
+- Ethernet RJ45
+- MIPI-10
+- ST Zio including ARDUINO(r) Uno V3 expansion connectors
+- ST morpho expansion connector
+* Flexible power supply options: ST-LINK USB VBUS or external sources
+* On-board STLINK-V3E debugger/programmer with SWD connector:
+- USB reenumeration capability: Virtual COM port, mass storage, debug port
+- STLINK-V3E standalone kit capability
+* Comprehensive free software libraries and examples available with the STM32Cube package
+* Support of a wide choice of Integrated Development Environments (IDEs) including IAR Embedded Workbench(r), MDK-ARM, and STM32CubeIDE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a. Arm is a registered trademark of Arm Limited (or its subsidiaries) in the US and/or elsewhere.
+
+
+
+
+
+To order the Nucleo-144 board corresponding to the targeted STM32, use the order code given below in Table 1:
+
+Table 1. Ordering information
+Order codeBoard referenceTarget STM32H7Differentiating featureNUCLEO-H723ZG
+MB1364(1)STM32H723ZGT6-NUCLEO-H743ZI2STM32H743ZIT6-NUCLEO-H753ZISTM32H753ZIT6Cryptography1. Subsequently named main board in the rest of the document.
+
+2.1 Codification
+The meaning of the codification is explained in Table 2.
+
+Table 2. Codification explanation
+NUCLEO-XXYYZTNDescriptionExample: NUCLEO-H743ZI2XXMCU series in STM32 32-bit Arm Cortex MCUsSTM32H7 seriesYYMCU product line in the seriesSTM32H743ZSTM32 package pin count144 pins
+TSTM32H7 flash memory size:
+-G for 1 Mbyte
+-I for 2 Mbytes
+2 MbytesNBoard version: void or 2STLINK-V3E
+
+
+
+
+3.1 System requirements
+* Multi-OS support: Windows(r) 10, Linux(r) 64-bit, or macOS(r)(a)(b)(c)
+* USB Type-A to Micro-B cable
+
+3.2 Development toolchains
+* IAR Systems(r) - IAR Embedded Workbench(r)(d)
+* Keil(r) - MDK-ARM(d)
+* STMicroelectronics - STM32CubeIDE
+
+3.3 Demonstration software
+The demonstration software, included in the STM32Cube MCU Package corresponding to the on-board microcontroller, is preloaded in the STM32 flash memory for easy demonstration of the device peripherals in standalone mode. The latest versions of the demonstration source code and associated documentation can be downloaded from www.st.com.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a. macOS is a trademark of Apple Inc., registered in the U.S. and other countries and regions.
+b. Linux is a registered trademark of Linus Torvalds.
+c. Windows is a trademark of the Microsoft group of companies.
+d. On Windows(r) only.
+
+
+
+
+
+Table 3 provides the conventions used for the ON and OFF settings in the present document.
+
+Table 3. ON/OFF conventions
+ConventionDefinitionJumper JPx ONJumper fittedJumper JPx OFFJumper not fittedJumper JPx [1-2]Jumper fitted between pin 1 and pin 2Solder bridge SBx ONSBx connections closed by 0 ? resistorSolder bridge SBx OFFSBx connections left openResistor Rx ONResistor solderedResistor Rx OFFResistor not solderedCapacitor Cx ONCapacitor solderedCapacitor Cx OFFCapacitor not soldered
+In this document, for any information that is common to all sales types, the references are noted as the STM32H7 Nucleo-144 board and STM32H7 Nucleo-144 boards.
+
+
+
+
+
+The STM32H7 Nucleo-144 board is a low-cost and easy-to-use development kit, used to evaluate and start development quickly with an STM32H7 series microcontroller in an LQFP144 package.
+Before installing and using the product, accept the evaluation product license agreement (EPLA) from the www.st.com/epla web page. For more information on the STM32H7 Nucleo-144 and demonstration software, visit the www.st.com/stm32nucleo web page.
+
+
+5.1 Getting started
+Follow the sequence below to configure the Nucleo-144 board and launch the demonstration application (for component location, refer to Figure 4):
+1. Check the jumper position on the board:
+
+Table 4. Jumper configuration
+JumperDefinitionPositionCommentJP1STLK_RSTOFF-JP2Power source selectionON [1-2]5V_USB_STLK (from ST-LINK)JP3T_NRSTON-JP4IDD measurementONMCU current measurement
+JP5
+VDD_MCU power selectionON [1-2] (default)VDD_MCU supplied with 3V3_VDDON [2-3] (optional)VDD_MCU supplied with 1V8_VDD
+2. For the correct identification of the device interfaces from the host PC and before connecting the board, install the Nucleo USB driver available on the www.st.com/stm32nucleo website.
+3. Power the board by connecting the STM32H7 Nucleo-144 board to a PC with a USB Type-A to Micro-B cable through the USB connector (CN1) on the ST-LINK. As a result, the PWR green LED (LD5) and COM LED (LD4) light up and the red LED (LD3) blinks.
+4. Press B1 (left button).
+5. Observe the blinking frequency of the three LEDs LD1 to LD3 changes, by clicking on the B1 button.
+6. The software demonstration and the several software examples that allow the user to use the Nucleo features, are available at the www.st.com/stm32nucleo web page.
+7. Develop an application, using the available examples.
+
+
+
+
+
+The STM32H7 Nucleo-144 board is designed around the STM32H7 series microcontrollers in a 144-pin LQFP package.
+Figure 3 shows the connections between the STM32H7 and its peripherals (STLINK-V3E, push-buttons, LEDs, USB, Ethernet, ST Zio connectors, and ST morpho headers).
+Figure 4 and Figure 5 show the location of these features on the STM32H7 Nucleo-144 board.
+The mechanical dimensions of the board are shown in Figure 6 and Figure 7.
+
+Figure 3. Hardware block diagram
+
+
+6.1 Nucleo-144 board layout
+Figure 4. Nucleo-144 board top layout
+
+
+Figure 5. Nucleo-144 bottom layout
+
+
+6.2 Mechanical drawing
+Figure 6. Nucleo-144 board mechanical drawing in millimeters
+
+
+
+
+Figure 7. Nucleo-144 board mechanical drawing in mils
+
+
+6.3 Embedded STLINK-V3E
+There are two different ways to program or debug the on-board STM32H7 MCU:
+* Using the embedded STLINK-V3E
+* Using an external debug tool connected to the MIPI-10 connector (CN5).
+The STLINK-V3E programming and debugging tool is integrated into the STM32H7 Nucleo- 144 board.
+The embedded STLINK-V3E supports only SWD and VCP for STM32H7 devices. For information about debugging and programming features, refer to the technical note Overview of ST-LINK derivatives (TN1235), which describes in detail all the STLINK/V3 features.
+Features supported on STLINK-V3E:
+* 5 V power supplied by a USB connector (CN1)
+* USB 2.0 high-speed-compatible interface
+* JTAG/serial wire debugging (SWD) specific features:
+- 3.0 to 3.6 V application voltage on the JTAG/SWD interface and 5 V-tolerant inputs
+- JTAG
+- SWD and serial viewer (SWV) communication
+* STDC14 (MIPI-10) compatible connector (CN5)
+* Status COM LED (LD4) which blinks during communication with the PC
+* Fault red LED (LD6) alerting on USB overcurrent request
+* 5 V/300 mA output power supply capability (U2) with current limitation and LED
+* Green LED ON: 5 V enabled (LD5)
+
+6.3.1 Drivers
+Before connecting the Nucleo-144 board to a Windows(r) PC via USB, a driver for STLINK- V3E must be installed (not required for Windows(r) 10). The toolset supporting ST-LINK automatically installs the driver. It is also available from the www.st.com website.
+In case the STM32H7 Nucleo-144 board is connected to the PC before installing the driver, the PC device manager might report some Nucleo interfaces as Unknown.
+To recover from this situation, after installing the dedicated driver, the association of Unknown USB devices found on the STM32H7 Nucleo-144 board to this dedicated driver must be updated in the device manager manually.
+Note:	ST recommends the use of a USB composite device, as shown in Figure 8.
+
+
+Figure 8. USB composite device
+Note:	37xx = 374E for STLINK-V3E without bridge functions 374F for STLINK-V3E with bridge functions
+
+6.3.2 STLINK-V3E firmware upgrade
+The STLINK-V3E embeds a firmware upgrade mechanism for an in-place upgrade through the USB port. As the firmware might evolve during the lifetime of the STLINK-V3E product (for example new functionalities, bug fixes, and support for new microcontroller families), ST recommends keeping the STLINK-V3E firmware up to date before starting to use the STM32H7 Nucleo-144 board. The latest version of this firmware is available from the www.st.com website.
+
+6.3.3 Using an external debug tool to program and debug the on-board STM32H7
+There are two basic ways to support an external debug tool:
+1. Keep the embedded STLINK-V3E running.
+Power on the STLINK-V3E at first until the COM LED lights RED. Then connect your external debug tool through the MIPI-10 debug connector (CN5).
+2. Set the embedded STLINK-V3E in the high-impedance state:
+When the STLK_RST jumper (JP1) is ON, the embedded STLINK-V3E is in the RESET state, and all GPIOs are in high impedance. Then it is possible to connect the external debug tool to the debug connector (CN5).
+
+
+Figure 9. Connecting an external debug tool to program the on-board STM32H7
+
+Table 5. MIPI-10 debug connector (CN5)
+MIPI-10
+PinSTDC14
+Pin
+CN5
+Designation-1NCReserved-2NCReserved13T_VCCTarget VCC24T_SWDIOTarget SWDIO using SWD protocol or target JTMS (T_JTMS) using JTAG protocol35GNDGround46T_SWCLKTarget SWCLK using SWD protocol or target JCLK (T_JCLK) using JTAG protocol57GNDGround68T_SWOTarget SWO using SWD protocol or target JTDO (T_JTMS) using JTAG protocol79T_JRCLKNot used by SWD protocol, target JRCLK (T_JRCLK) using JTAG protocol, only for specific use810T_JTDINot used by SWD protocol, target JTDI (T_JTDI) using JTAG protocol, only for external tools911GNDDetectGND detection signal for plug indicator, used on SWD and JTAG neither1012T_NRSTTarget NRST using SWD protocol or target JTMS (T_JTMS) using JTAG protocol
+
+Table 5. MIPI-10 debug connector (CN5) (continued)
+MIPI-10
+PinSTDC14
+Pin
+CN5
+Designation-13T_VCP_RXTarget RX used for VCP (must be UART dedicated to bootloader)-14T_VCP_TXTarget TX used for VCP (must be UART dedicated to bootloader)
+6.4 Power supply
+Five different sources can provide the power supply:
+* A host PC connected to CN1 through a USB cable (default setting)
+* An external 7 to 12 V power supply connected to CN8 pin 15 or CN11 pin 24
+* An external 5 V power supply connected to CN11 pin 6
+* An external 5 V USB charger (5V_USB_CHGR) connected to CN1
+* An external 3.3 V power supply (3V3) connected to CN8 pin 7 or CN11 pin 16
+Either the host PC through the USB cable, or an external source VIN (7 to 12 V), E5V (5 V), or +3.3 V power supply pins on CN8 or CN11, provides the power supply. In case VIN, E5V, or +3.3 V is used to power the Nucleo-144 board. This power source must comply with the EN-60950-1: 2006+A11/2009 standard and must be safety extra low voltage (SELV) with limited power capability.
+In case the power supply is +3.3 V, the STLINK-V3E is not powered and cannot be used.
+
+6.4.1 Power supply input from STLINK-V3E USB connector (default setting)
+The 5 V signal on the STLINK-V3E USB connector (CN1) can power the STM32H7 Nucleo- 144 board and its shield. Use the JP2 [1-2] configuration of the STLINK jumper (refer to Figure 10).
+This is the default setting.
+
+
+Figure 10. Power supply input from STLINK-V3E USB connector with PC (5 V, 500 mA max)
+If the USB enumeration succeeds, the 5V_ST_LINK power is enabled, by asserting the PWR_ENn signal from STM32F723IEK6 'STLINK-V3E' (U7). This pin is connected to a power switch (U2), which powers the board. The power switch (U2) features also a current limitation to protect the PC in case of a short-circuit onboard. If an overcurrent (more than 500 mA) happens onboard, the red LED (LD6) is lit.
+The STLINK-V3E USB connector (CN1) can power the Nucleo board with its shield. However, the STLINK-V3E circuit gets power before USB enumeration because the host PC only provides 100 mA to the board at that time.
+During the USB enumeration, the Nucleo board asks for 500 mA power to the host PC.
+* If the host can provide the required power, the enumeration finishes with a SetConfiguration command. Then, the power switch and the green LED (LD5) are turned ON. Thus, the Nucleo board and its shield can consume 500 mA current, but no more.
+* If the host is not able to provide the requested current, the enumeration fails. Therefore, the power switch (U2) remains OFF and the MCU part including the extension board is not powered. As a consequence, the green LED (LD5) remains turned OFF. In this case, it is mandatory to use an external power supply.
+
+Warning:	In case the maximum current consumption of the STM32H7 Nucleo-144 board and its shield boards exceed 300 mA, it is mandatory to power the STM32H7 Nucleo-144 board, using an external power supply connected to E5V, VIN, or +3.3 V.
+
+
+6.4.2 External power supply input from VIN (7 to 12 V, 800 mA max)
+When the STM32H7 Nucleo-144 board is power supplied by VIN (refer to Table 6 and
+Figure 11), the jumper (JP2) configuration must be [3-4] VIN.
+
+
+The Nucleo-144 board and its shield boards can be powered in three different ways from an external power supply, depending on the voltage used. The three power sources are summarized in Table 6.
+
+Table 6. External power sources: VIN (7 to 12 V)
+Input power name
+Connector pins
+Voltage range
+Max current
+Limitation
+
+VIN
+CN8 pin 15
+CN11 pin 24
+
+7 to 12 V
+
+800 mAFrom 7 to 12 V only and input current capability is linked to input voltage: 800 mA input current when VIN=7 V
+450 mA input current when 7 V<VIN<9 V
+250 mA input current when 9 V<VIN<12 V
+Figure 11. Power supply input from VIN (7 to 12 V, 800 mA max)
+Note:	Refer to Section 6.4.6 about debugging when using an external power supply.
+
+6.4.3 External power supply input 5V_EXT (5 V, 500 mA max)
+When the STM32H7 Nucleo-144 board is power supplied by EXT (refer to Table 7 and
+Figure 12), the jumper configuration must be the following: JP2 jumper on pin 5-6 'EXT'
+
+Table 7. External power sources: 5V_EXT
+Input power nameConnector pinsVoltage rangeMax currentEXTCN11 pin 64.75 V to 5.25 V500 mA
+Note:	Refer to Section 6.4.6 about debugging when using an external power supply.
+
+
+Figure 12. Power supply input from 5V_EXT (5 V, 500 mA max)
+
+6.4.4 External power supply input from a USB charger (5 V)
+When the STM32H7 Nucleo-144 board is power supplied by a USB charger on CN1 (refer to Table 8 and Table 13), the jumper configuration must be JP2 [7-8] CHGR.
+
+Table 8. External power sources: CHGR (5 V)
+Input power nameConnector pinsVoltage rangeMax currentCHGRCN15 V-
+Figure 13. Power supply input from STLINK-V3E USB connector with a USB charger (5 V)
+
+6.4.5 External power supply input from 3V3_EXT (3.3 V)
+When the 3.3 V is provided by a shield board, it is worthy to use the 3V3 (CN8 pin 7 or CN11 pin 16) directly as power input (refer to Table 9 and Figure 14). In this case, programming and debugging features are not available, since the STLINK-V3E is not powered.
+
+
+Table 9. External power sources: 3V3_EXT (3.3 V)
+Input power nameConnector pinsVoltage rangeMax current3V3CN8 pin 7
+CN11 pin 163 V to 3.6 V1.3 A
+Figure 14. Power supply input from 3V3_EXT (3.3 V)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6.4.6 Debugging while using VIN or EXT as an external power supply
+When powered by VIN or EXT, it is still possible to use the STLINK-V3E for programming or debugging only. In this case, it is mandatory to power the board first using VIN or EXT, then to connect the USB cable to the PC. In this way, the enumeration succeeds, thanks to the external power source.
+The following power-sequence procedure must be respected:
+1. Configure the JP2 jumper [5-6] for EXT or [3-4] for VIN.
+2. Connect the external power source to VIN or EXT.
+3. Power on the external power supply 7 V < VIN < 12 V to VIN, or 5 V for EXT.
+4. Check that the green LED (LD5) is turned ON.
+5. Connect the PC to the USB connector (CN1).
+If this order is not respected, VBUS coming from STLINK-V3E might power the board, and the following risks might be encountered:
+1. If the board needs more than 300 mA current, the PC might be damaged, or the PC can limit the supplied current. As a consequence, the board is not powered correctly.
+2. 300 mA is requested during enumeration. So, there is a risk that the request is rejected and the enumeration does not succeed if the PC cannot provide such current. Consequently, the board is not power-supplied. The green LED (LD5) remains OFF.
+
+
+6.5 Clock sources
+
+6.5.1 HSE clock (high-speed external clock)
+There are four ways to configure the pins corresponding to the external high-speed clock (HSE):
+* MCO from STLINK-V3E (default): The MCO output of ST-LINK is used as an input clock. This frequency cannot be changed. It is fixed at 8 MHz and connected to the PF0/PH0-OSC_IN of the STM32H7 series microcontroller. The configuration must be:
+- SB44 and SB46 OFF
+- SB45 ON
+- SB3 and SB4 OFF
+* HSE on-board oscillator from X3 crystal (not provided): For its typical frequencies, capacitors, and resistors, refer to the STM32H7 series microcontroller datasheet and the application note Oscillator design guide for STM8AF/AL/S and STM32 microcontrollers (AN2867) for the oscillator design guide. The X3 crystal has the following characteristics: 25 MHz, 6 pF, 20 ppm. The configuration must be:
+- SB44 and SB46 OFF
+- SB3 and SB4 ON
+- C69 and C70 ON with 5.6 pF capacitors
+- SB45 OFF
+* Oscillator from external PF0/PH0: from an external oscillator through pin 29 of the CN11 connector. The configuration must be:
+- SB46 ON
+- SB45 OFF
+- SB3 and SB4 OFF
+* HSE not used: PF0/PH0 and PF1/PH1 are used as GPIOs instead of clocks. The configuration must be:
+- SB44 and SB46 ON
+- SB45 OFF
+- SB3 and SB4 OFF
+
+
+6.5.2 LSE clock (low-speed external clock) - 32.768 kHz
+There are three ways to configure the pins corresponding to the low-speed clock (LSE):
+* On-board oscillator (default): X2 crystal. Refer to the application note Oscillator design guide for STM8AF/AL/S and STM32 microcontrollers (AN2867) for oscillator design guide for STM32H7 series microcontrollers. The configuration must be:
+- SB40 and SB41 OFF
+- R38 and R39 ON
+* Oscillator from external PC14: From an external oscillator through pin 25 of the CN11 connector. The configuration must be:
+- SB40 and SB41 ON
+- R38 and R39 OFF
+* LSE not used: PC14 and PC15 are used as GPIOs instead of the low-speed clock. The configuration must be:
+- SB40 and SB41 ON
+- R38 and R39 OFF
+
+
+6.6 Board functions
+
+6.6.1 LEDs
+User LD1: A green user LED is connected to the STM32H7 I/O PB0 (SB39 ON and SB47 OFF) or PA5 (SB47 ON and SB39 OFF) corresponding to the ST Zio D13.
+User LD2: A yellow user LED is connected to PE1.
+User LD3: A red user LED is connected to PB14.
+These user LEDs are on when the I/O is HIGH value, and are off when the I/O is LOW.
+COM LD4: The tricolor (green, orange, and red) LED (LD4) provides information about ST- LINK communication status. LD4 default color is red. LD4 turns to green to indicate that the communication is in progress between the PC and the STLINK-V3E, with the following setup:
+* Slow blinking red/OFF at power-on before USB initialization
+* Fast blinking red/OFF after the first correct communication between the PC and STLINK-V3E (enumeration)
+* Red LED ON when the initialization between the PC and STLINK-V3E is complete
+* Green LED ON after a successful target communication initialization
+* Blinking red/green during communication with the target
+* Green ON communication finished and successful
+* Orange ON communication failure
+PWR LD5: The green LED (LD5) indicates that the STM32H7 part is powered. The +5 V power is available on CN8 pin 9 and CN11 pin 18.
+USB power fault LD6: The red LED (LD6) indicates that the board power consumption on USB exceeds 500 mA, consequently, the user must power the board using an external power supply.
+USB FS LD7 and LD8: Refer to USB OTG_FS.
+
+
+6.6.2 Push-buttons
+B1 USER (blue button): the user button is connected to the I/O PC13 by default (tamper support: SB51 ON and SB58 OFF) or PA0 (wake-up support: SB58 ON and SB51 OFF) of the STM32H7 series microcontroller.
+B2 RESET (black button): this push-button is connected to NRST and is used to reset the STM32H7 series microcontroller.
+
+6.6.3 MCU voltage selection: 1V8/3V3
+The STM32H7 Nucleo-144 board offers the possibility to supply the STM32H7 series microcontroller with 1.8 V or 3.3 V. JP5 is used to select the VDD_MCU power level.
+* Place the JP5 jumper on 3V3 to supply the MCU with 3V3, connecting pins 1 and 2.
+* Place the JP5 jumper on 1V8 to supply the MCU with 1V8, connecting pins 2 and 3.
+
+6.6.4 Current consumption measurement (IDD)
+The IDD jumper (JP4) is used to measure the STM32H7 series microcontroller consumption by removing the jumper and connecting an ammeter:
+* JP4 must be ON when STM32H7 is powered with 3V3_VDD (default)
+* If JP4 is OFF, an ammeter must be connected to measure the STM32H7 current. If there is no ammeter, the STM32H7 is not powered.
+
+
+Warning:		On MB1364 REV.C, 'VDD_MCU' is also supplying Ethernet PHY (U15) and debug voltage translation (U1 and U10).
+
+
+If needed, for low power measurement (for example Standby mode), to measure only MCU (U7) power consumption, the user must remove the following components: R4, R43, R44, R45, R46, R47, R48, R49, R50, R51, R52, R53, R59, R61, U1, U10, U15, and SB45.
+After removing these components, it becomes impossible to use Ethernet and 1.8 V debug with STLINK-V3E.
+
+6.6.5 Virtual COM port (VCP): LPUART/USART
+The STM32H7 Nucleo-144 board enables connecting an LPUART or a USART interface to the STLINK-V3E, or to the ST morpho and ARDUINO(r) Uno V3 connectors.
+The selection is done by setting the related solder bridges (refer to Table 10 and Table 11
+below).
+By default the USART3 communication between the target STM32H7 and the STLINK-V3E is enabled, to support the Virtual COM port (SB12 and SB19 ON).
+
+
+Table 10. USART3 connection
+ Pin name
+Function   Virtual COM port (default configuration)
+ST morpho connectionPD8USART3 TXSB19 ON
+SB9, SB18, and SB82 OFFSB82 ON
+SB18 and SB19 OFFPD9USART3 RXSB12 ON
+SB34, SB66, and SB81 OFFSB81 ON
+SB12 and SB66 OFF
+Table 11. LPUART1 connection
+ Pin name
+Function
+Virtual COM portARDUINO(r) D0 and D1
+ST morpho connection
+PB6
+LPUART1 TXSB9 and SB18 ON SB8, SB19, and SB61 OFFSB8 and SB19 ON SB9, SB18, and SB61 OFFSB8, SB9, and SB61 OFFPB7LPUART1 RXSB34 and SB66 ON SB12 and SB68 OFFSB12 and SB68 ON SB34 and SB66 OFFSB34 and SB68 OFF
+Hardware connection required for USART bootloader:
+The STM32H7x3 embeds a USART bootloader. To use the USART bootloader (USART1), hardware modifications are required on the Nucleo board. Flying wires must be connected between PD8/PD9 (USART3 available on SB19/SB12) and PB10/PB11 (USART1 available on CN15).
+
+6.6.6 USB OTG_FS
+The STM32H7 Nucleo-144 board supports USB OTG_FS communication via the USB Micro-AB connector (CN13) and the USB power switch (U18) connected to VBUS.
+
+Warning:		USB Micro-AB connector (CN13) cannot power the Nucleo- 144 board. To avoid damaging the STM32H7, it is mandatory to power the Nucleo-144 before connecting a USB cable on CN13. Otherwise, there is a risk of current injection on STM32H7 I/Os.
+
+
+A green LED (LD8) lights in one of these cases:
+* Power switch (U12) is ON and the STM32H7 Nucleo-144 board works as a USB Host
+* VBUS is powered by another USB Host when the STM32H7 Nucleo-144 board works as a USB Device.
+The red LED (LD7) lights if overcurrent occurs when +5 V is enabled on VBUS in USB Host mode.
+Note:	1.ST recommends powering the Nucleo-144 board with an external power supply when using the USB OTG or Host function.
+2. SB76 must be ON when using USB OTG_FS.
+
+
+Table 12. USB pin configuration
+ Pin name
+Function
+ Configuration when using USB connectorConfiguration when using ST morpho connector
+RemarkPA8USB SOF--Test point TP4PA9USB VBUSSB23 ONSB23 OFF-PA10USB IDSB24 ONSB24 OFF-PA11USB DMSB21 ON, SB16 OFFSB16 ON, SB21 OFF-PA12USB DPSB22 ON, SB17 OFFSB17 ON, SB22 OFF-PD10USB PWR ENSB77 ONSB77 OFF-PG7USB FS OVCRSB76 ONSB76 OFF-
+ESD protection part is implemented on the USB port because all USB pins on STM32H7 are dedicated to USB port protection only on the STM32H7 Nucleo-144 board. USB pin ID is not used.
+
+6.6.7 Ethernet
+The STM32H7 Nucleo-144 board supports 10M/100M Ethernet communication by a PHY (U15) and RJ45 connector (CN14). Ethernet PHY is connected to the STM32H7 series microcontroller via the RMII interface. The PHY RMII_REF_CLK generates the 50 MHz clock for the STM32H7 series microcontroller.
+Note:	1.JP6 and SB72 must be ON when using Ethernet.
+2.The Ethernet PHY must be set in power-down mode (in this mode, the Ethernet PHY reference clock turns off) to achieve the expected low-power mode current. This is done by configuring the Ethernet PHY basic control register (at address 0x00) bit 11 (power down) to 0b1. SB57 can also be OFF to get the same effect.
+
+Table 13. Ethernet pin configuration
+
+ Pin name
+
+FunctionConflict with
+ST Zio connector signal
+Configuration when using EthernetConfiguration when using
+ST Zio or ST morpho connectorPA1RMII reference clock-SB57 ONSB57 OFFPA2RMII MDIO-SB72 ONSB72 OFFPC1RMII MDC-SB64 ONSB64 OFFPA7RMII RX data valid-SB31 ONSB31 OFFPC4RMII RXD0-SB36 ONSB36 OFFPC5RMII RXD1-SB29 ONSB29 OFFPG11RMII TX enable-SB27 ONSB27 OFFPG13RXII TXD0-SB30 ONSB30 OFFPB13RMII TXD1I2S_A_CKJP6 ONJP6 OFF
+
+6.7 Solder bridges and jumpers
+SBxx can be found on the top layer and SB1xx can be found on the bottom layer of the Nucleo-144 board.
+
+Table 14. Solder bridge and jumper configuration
+BridgeState(1)Description
+SB1 (3V3_PER)ONPeripheral power 3V3_PER is connected to 3V3.OFFPeripheral power 3V3_PER is not connected.
+
+SB2 (3V3)ONOutput of voltage regulator ST1L05CPU33R is connected to 3V3.OFFOutput of voltage regulator ST1L05CPU33R is not connected.
+SB80 (1V8_VDD)ONOutput of voltage regulator ST1L05BPUR is connected to 1V8_VDD.OFFOutput of voltage regulator ST1L05BPUR is not connected.
+SB6ONInput of voltage regulator ST1L05BPUR is connected to 3V3_VDD.OFFInput of voltage regulator ST1L05BPUR is not connected.
+
+SB12, SB19 (ST-LINK- USART)
+ONPG9 and PG14 on ST-LINK STM32F723IEK6 are connected to PD8 and PD9 to enable the Virtual COM port. Thus, PD8 and PD9 on the ST morpho connectors cannot be used.OFFPG9 and PG14 on ST-LINK STM32F723IEK6 are
+disconnected from PD8 and PD9 on STM32H7.
+JP1 (ST-LINK_RST)OFFNo incidence on ST-LINK STM32F723IEK6 NRST signal.ONST-LINK STM32F723IEK6 signal is connected to GND (ST-LINK reset to reduce power consumption).
+SB32 (SWO)
+ONSWO signal of the STM32H7 (PB3) is connected to the ST- LINK SWO input.
+(SB26 must be OFF)OFFSWO signal of STM32H7 is not connected.
+JP3 (NRST)ONBoard RESET signal (NRST) is connected to ST-LINK reset control I/O (T_NRST).OFFBoard RESET signal (NRST) is not connected to ST-LINK reset control I/O (T_NRST).
+
+SB10, SB11, SB20 (IOREF)OFF, ON, OFFIOREF is connected to VDD_MCU.ON, OFF, OFFIOREF is connected to 3V3_PER.OFF, OFF, ONIOREF is connected to 3V3.
+
+Table 14. Solder bridge and jumper configuration (continued)
+BridgeState(1)Description
+SB14 (SDMMC_D0), SB15 (SDMMC_D1)ONThese pins are connected to the ST morpho connector (CN12).OFFThese pins are disconnected from the ST morpho connector (CN12) to avoid stubs of SDMMC data signals on the PCB.
+
+SB39, SB47 (LD1-LED)ON, OFFGreen user LED (LD1) is connected to PB0.OFF, ONGreen user LED (LD1) is connected to D13 of the ARDUINO(r) signal (PA5).OFF, OFFGreen user LED (LD1) is not connected.ON, ONForbidden
+SB33, SB35 (D11)OFF, OND11 (pin 14 of CN7) is connected to STM32H7 PB5 (SPI_A_MOSI/ TIM_D_PWM2)ON, OFFD11 (pin 14 of CN7) is connected to STM32H7 PA7 (SPI_A_MOSI/ TIM_E_PWM1)
+SB40, SB41
+(X2 crystal)OFF, OFFPC14 and PC15 are not connected to the ST morpho connector (CN11). X2 is used to generate the 32 kHz clock.ON, ONPC14 and PC15 are connected to the ST morpho connector (CN11). R38 and R39 must be OFF.
+
+
+
+SB44 (PF1/PH1) SB46 (PF0/PH0)
+(main clock)
+
+ON, OFFPF0/PH0 is not connected to the ST morpho connector (CN11).
+PF1/PH1 is connected to the ST morpho connector
+(MCO is used as the main clock for STM32H7 on PF0/PH0- SB45 ON).
+OFF, OFFPF0/PH0 and PF1/PH1 are not connected to the ST morpho connector (CN11). X3, C69, C70, SB3, and SB4 provide a clock. In this case, SB45 must be OFF.ON, ONPF0/PH0 and PF1/PH1 are connected to the ST morpho connector (CN11). SB3, SB4, and SB45 must be OFF.
+    SB45 (STLK_MCO)ONMCO of ST-LINK (STM32F723IEK6) is connected to PF0/PH0 of STM32H7.OFFMCO of ST-LINK (STM32F723IEK6) is not connected to PF0/PH0 of STM32H7.
+SB3, SB4
+(external 25M crystal)OFF, OFFPF0/PH0 and PF1/PH1 are not connected to an external 25 MHz crystal X3.ON, ONPF0/PH0 and PF1/PH1 are connected to an external 25 MHz crystal X3.SB52 (VBAT)ONVBAT pin of STM32H7 is connected to VDD_MCU.OFFVBAT pin of STM32H7 is not connected to VDD_MCU.
+SB51, SB58 (B1-USER)ON, OFFB1 push-button is connected to PC13.OFF, ONB1 push-button is connected to PA0 (set SB51 OFF if the ST Zio connector is used).OFF, OFFB1 push-button is not connected.
+
+Table 14. Solder bridge and jumper configuration (continued)
+BridgeState(1)Description
+SB75 (PA0)ONPA0 is connected to the ST Zio connector (pin 29 of CN10).OFFPA0 is not connected to the ST Zio connector (pin 29 of CN10).RMII signals SB57 (PA1), SB64 (PC1),
+SB72 (PA2), SB36 (PC4),
+SB29 (PC5), SB30 (PG13), SB27 (PG11), SB31 (PA7), JP6
+(PB13)
+ONThese pins are used as RMII signals and connected to Ethernet PHY. SB7 must be OFF.
+These pins must not be used on the ST morpho or the ST Zio connectors.
+
+OFFThese pins can be used as GPIOs on the ST morpho connectors.
+PB13 can be used as I2S_A_CK on ST Zio (pin 5 of CN7) if not used on the ST morpho.SB74 (Ethernet nRST) RMII signalONNRST of STM32H7 is connected to Ethernet PHY (U15).OFFNRST of STM32H7 is not connected to Ethernet PHY (U15).
+SB76 (PG7)ONUSB overcurrent alarm is connected.OFFUSB overcurrent alarm is not connected. PG7 is used as GPIO on the ST morpho connector (CN12).
+SB77 (PD10)ONPD10 is connected to the USB power switch (U18) to control VBUS.OFFPD10 is used as GPIO on the ST morpho connector (CN12).
+SB23 (PA9)ONPA9 is connected to USB VBUS.OFFPA9 is not connected to USB VBUS.
+PA9 is used as GPIO on the ST morpho connector (CN12).
+SB24 (PA10)ONPA10 is connected to the USB ID.OFFPA10 is not connected to the USB ID.
+PA10 is used as GPIO on the ST morpho connector (CN12).
+SB21 (PA11), SB22 (PA12)ONThese pins are used as D- and D+ on the USB connector (CN13). SB16 and SB17 must be OFF.OFFThese pins are used as GPIOs on the ST morpho connectors. SB16 and SB17 must be ON.
+SB13ONVDD33_USB_1 is connected to 3V3_VDD.OFFVDD33_USB_1 is not supplied.
+SB25ONVDD_MMC_1 is connected to VDD_MCU.OFFVDD_MMC_1 is not supplied.
+SB59 (PG6)ONPG6 is connected to QSPI_CS. SB61 must be OFF.OFFPG6 is used as GPIO on the ST morpho connector (CN12).
+
+SB63 (PB2)ONPB2 is connected to QSPI_CLK. SB69 must be OFF.
+OFFPB2 is not connected to QSPI_CLK and can be used as COMP1_INP (SB69 ON) or used as GPIO on the ST morpho connector (CN12). SB69 must be OFF.
+
+Table 14. Solder bridge and jumper configuration (continued)
+BridgeState(1)DescriptionSB71, SB73 (PE6)ON, OFFPE6 is connected to SAI_A_SD (D59 of CN9)OFF, ONPE6 is connected to TIMER_A_BKIN2 (D38 of CN10)
+SB67 (PE2)ONPE2 is connected to SAI_A_MCLK (D56 of CN9). QSPI_BK1_IO2 cannot be used (D31 of CN10).OFFPE2 is used as QSPI_BK1_IO2 (D31 of CN10).
+
+SB53 (PC2) and SB60 (PF10)ONADC_IN are connected to A4 and A5 (pins 9 and 11) on the ST Zio connector (CN9). Thus, SB55 and SB62 must be OFF
+OFFADC_IN are connected to A4 and A5 (pins 9 and 11) on the ST Zio connector (CN9). Thus, SB55 and SB62 can be ON (I²C)
+SB65 (PF11)
+OFFOn NUCLEO-H723ZG, NUCLEO-H743ZI2, and NUCLEO-
+H753ZI, PF11 is used only as GPIO on the ST morpho connector (CN12). It must not be used as ADC_IN.
+I²C
+SB55 (PB9) and SB62 (PB8)
+ONPB9 and PB8 (I²C) are connected to A4 and A5 (pins 9 and 11) on the ST Zio connector (CN9). Thus, SB60 and SB53 must be OFFOFFPB9 and PB8 (I²C) are not connected to A4 and A5 (pins 9 and 11) on the ST Zio connector (CN9).
+
+SB28 and SB70 (PE9)ON, OFFPE9 is used as TIMER_A_PWM1 (pin 4) on the ST Zio connector (CN10).OFF, ONPE9 is used as COMP2_INP (pin 15) on the ST Zio connector (CN9).SB37 (PF12) and SB38 (PF4)
+OFF, ONADC_IN is connected to A6 (pin 7) on the ST Zio connector (CN10).
+PF12 must not be used as ADC_IN. SB37 must be OFF.SB48 (PF5) and SB49 (PF13)
+ON, OFFADC_IN is connected to A7 (pin 9) on the ST Zio connector (CN10).
+PF13 must not be used as ADC_IN. SB49 must be OFF.SB50 (PF14) and SB54 (PF6)
+OFF, ONADC_IN is connected to A8 (pin 11) on the ST Zio connector (CN10).
+PF14 must not be used as ADC_IN. SB50 must be OFF.
+
+SB5
+OFFNUCLEO-H723ZG, NUCLEO-H743ZI2, and NUCLEO-
+H753ZI support 1V8 and 3V3 for VDD_MCU. Thus, the level shifter (U10) is needed and SB5 must be OFF.ONIf the MCU is supplied with 3V3, U10 can be by-passed and SB5 can be ON.
+SB81ONUSART_RX connected to ST morpho (CN11)OFFUSART_RX not connected to ST morpho (CN11)
+SB82ONUSART_TX connected to ST morpho (CN12)OFFUSART_TX not connected to ST morpho (CN12)1. The default SBx state is shown in bold.
+
+
+All the other solder bridges present on the STM32H7 Nucleo-144 board are used to configure several I/Os and power supply pins for compatibility of features and pinout with the supported target STM32H7.
+The STM32H7 Nucleo-144 board is delivered with the solder bridges configured, according to the supported target STM32H7.
+
+
+
+
+
+Several connectors are implemented on the STM32H7 Nucleo-144 board.
+
+
+7.1 STLINK-V3E USB Micro-B connector (CN1)
+The USB Micro-B connector (CN1) is used to connect embedded STLINK-V3E to the PC for programming and debugging purposes.
+The related pinout for the USB STLINK-V3E connector is listed in Table 15.
+
+Table 15. USB Micro-B connector (CN1) pinout
+
+Connector  Pin number
+Pin name
+Signal nameST-LINK
+MCU pin
+Function
+
+
+CN11VBUS5V_USB_CHGR-5 V power2DMUSB_DEV_HS_CN_NPB14USB differential pair N3DPUSB_DEV_HS_CN_PPB15USB differential pair P4ID---5GND--GND
+7.2 USB OTG_FS connector (CN13)
+A USB OTG full-speed communication link is available at the USB Micro-AB receptacle connector (CN13). Micro-AB receptacle enables USB Host and USB Device features.
+The related pinout for the USB OTG_FS connector is listed in Table 16.
+
+Table 16. USB OTG_FS Micro-AB connector (CN13) pinout
+
+Connector  Pin number
+Pin name
+Signal name
+MCU pin
+Function
+
+
+CN131VBUSUSB_FS_VBUSPA95 V power2DMUSB_FS_NPA11USB differential pair M3DPUSB_FS_PPA12USB differential pair P4IDUSB_FS_IDPA10-5GND--GND
+
+7.3 Ethernet RJ45 connector (CN14)
+The STM32H7 Nucleo-144 board supports 10Mbps/100Mbps Ethernet communication with the PHY (U15) and integrated RJ45 connector (CN14). The Ethernet PHY is connected to the MCU via the RMII interface.
+The X4 oscillator generates the 25 MHz clock for the PHY. The 50 MHz clock for the MCU (derived from the 25 MHz crystal oscillator) is provided by the RMII_REF_CLK of the PHY.
+
+Figure 15. Ethernet RJ45 connector (CN14) front view
+1. Green LED: Ethernet traffic
+2. Amber LED: Ethernet connection
+
+
+The related pinout for the Ethernet connector is listed in Table 17.
+
+Table 17. Ethernet RJ45 connector (CN14) pinout
+
+Connector  Pin number
+Description
+MCU pin  Pin number
+Description
+MCU pin
+
+
+
+CN141TX+-7NC-2TX--8NC-3RX+-9K, yellow LED-4NC-10A, yellow LED-5NC-11K, green LED-6RX--12A, green LED-
+
+
+
+
+8.1 ST Zio connectors
+For all STM32H7 Nucleo-144 boards, Figure 16 shows the signals connected by default to the ST Zio connectors (CN7, CN8, CN9, and CN10), including the support of ARDUINO(r) Uno V3.
+
+Figure 16. NUCLEOH7 Nucleo-144 board
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CN7, CN8, CN9, and CN10 are female connectors on the top side and male connectors on the bottom side. They include support for ARDUINO(r) Uno V3. Most shields designed for ARDUINO(r) Uno V3 can fit the STM32H7 Nucleo-144 board.
+To cope with ARDUINO(r) Uno V3, apply the following modifications:
+* SB55 and SB62 must be ON
+* SB53/60/65 must be OFF to connect I²C on A4 (pin 9) and A5 (pin 11 of CN9).
+
+
+Caution:1	The I/Os of the STM32H7 series microcontroller are 3.3 V compatible instead of 5 V for ARDUINO(r) Uno V3.
+Caution:2	R37 must be OFF before implementing the ARDUINO(r) shield with VREF+ power provided on CN7 pin 6. Refer to Table 14: Solder bridge and jumper configuration for details on R37.
+
+NUCLEO-H723ZG, NUCLEO-H743ZI2, and NUCLEO-H753ZI pin assignments
+Table 18. ZIO connector (CN7) pinout(1)
+
+Pin Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal name
+STM32H7 pin
+MCU function1D16I2S_A_MCKPC6I2S_22D15I2C_A_SCLPB8I2C_1_SCL3D17I2S_A_SDPB15I2S_24D14I2C_A_SDAPB9I2C_1_SDA5D18I2S_A_CKPB13(2)I2S_26VREFPVREFP-VDDA/VREFP7D19I2S_A_WSPB12I2S_28GNDGND--9D20I2S_B_WSPA15I2S_310D13SPI_A_SCKPA5SPI1_SCK11D21I2S_B_MCKPC7I2S_312D12SPI_A_MISOPA6SPI1_MISO13D22 I2S_B_SD/ SPI_B_MOSIPB5I2S_3/ SPI314D11SPI_A_MOSI / TIM_E_PWM1PB5(3)SPI1_MOSI/ TIM3_CH215D23 I2S_B_CK/ SPI_B_SCKPB3I2S_3/ SPI316D10 SPI_A_CS / TIM_B_PWM3PD14SPI1_CS/ TIM4_CH317D24SPI_B_NSSPA4SPI318D9TIM_B_PWM2PD15TIM4_CH419D25SPI_B_MISOPB4SPI320D8I/OPF3-1. For more details, refer to Table 14: Solder bridge and jumper configuration.
+2. PB13 is used as I2S_A_CK and connected to CN7 pin 5. If JP6 is ON, it is also connected to Ethernet PHY as RMII_TXD1. In this case, only one function of the Ethernet or I2S_A must be used.
+3. PA7 is used as D11 and connected to CN7 pin 14. If SB31 is ON, it is also connected to Ethernet PHY as RMII_CRS_DV. In this case, only one function of the Ethernet or D11 must be used.
+
+Table 19. ZIO connector (CN8) pinout
+
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function1NCNC--2D43SDMMC_D0PC8SDMMC3IOREFIOREF-3.3 V reference4D44SDMMC_D1 I2S_A_CKINPC9 SDMMC I2S_CKIN5NRSTNRSTNRSTRESET6D45SDMMC_D2PC10SDMMC
+Table 19. ZIO connector (CN8) pinout (continued)
+
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function73V33V3-3.3 V input/output8D46SDMMC_D3PC11SDMMC95V5V-5 V output10D47SDMMC_CKPC12SDMMC11GNDGND-ground12D48SDMMC_CMDPD2SDMMC13GNDGND-ground14D49I/OPG2-15VINVIN-Power input16D50I/OPG3-
+Table 20. ZIO connector (CN9) pinout
+
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function1A0ADCPA3ADC12_INP152D51USART_B_SCLKPD7USART_23A1ADCPC0ADC123_INP104D52USART_B_RXPD6USART_25A2ADCPC3ADC12_INP136D53USART_B_TXPD5USART_27A3ADCPB1ADC12_INP58D54USART_B_RTSPD4USART_29A4ADCPC2/ PB9ADC123_INP12/ I2C1_SDA10D55USART_B_CTSPD3USART_211A5ADCPF10/ PB8ADC3_INP6/ I2C1_SCL12GNDGND--13D72COMP1_INPPB2COMP1_INP14D56SAI_A_MCLKPE2(1)SAI_1_A15D71COMP2_INPPE9COMP2_INP16D57SAI_A_FSPE4SAI_1_A17D70I2C_B_SMBAPF2I2C218D58SAI_A_SCKPE5SAI_1_A19D69I2C_B_SCLPF1I2C220D59SAI_A_SDPE6SAI_1_A21D68I2C_B_SDAPF0I2C222D60SAI_B_SDPE3SAI_1_B23GNDGND--24D61SAI_B_SCKPF8SAI_1_B25D67CAN_RXPD0CAN_126D62SAI_B_MCLKPF7SAI_1_B
+Table 20. ZIO connector (CN9) pinout (continued)
+
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function27D66CAN_TXPD1CAN_128D63SAI_B_FSPF9SAI_1_B29D65I/OPG0-30D64I/OPG1-1. PE2 is connected to both CN9 pin 14 (SAI_A_MCLK) and CN10 pin 25 (QSPI_BK1_IO2). Only one function must be used at one time.
+
+Table 21. ZIO connector (CN10) pinout
+
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function
+Pin
+Pin name
+Signal nameSTM32H7
+pin
+MCU function1AVDDVDDA-Analog VDD2D7I/OPG12I/O3AGNDAGND-Analog GND4D6TIMER_A_PWM1PE9TIM1_CH15GNDGND-GND6D5TIMER_A_PWM2PE11TIM1_CH27A6ADC_A_INPF4ADC3_INP98D4I/OPE14I/O9A7ADC_B_INPF5ADC3_INP410D3TIMER_A_PWM3PE13TIM1_CH311A8ADC_C_INPF6ADC3_INP812D2I/OPG14I/O13D26QSPI_CSPG6QSPI1_NCS14D1USART_A_TXPB6LPUART115D27QSPI_CLKPB2QSPI1_CLK16D0USART_A_RXPB7LPUART117GNDGND-GND18D42TIMER_A_PWM1NPE8TIM1_CH1N19D28QSPI_BK1_IO3PD13QSPI1_IO20D41TIMER_A_ETRPE7TIM1_ETR21D29QSPI_BK1_IO1PD12QSPI1_IO22GNDGND-GND23D30QSPI_BK1_IO0PD11QSPI1_IO24D40TIMER_A_PWM2NPE10TIM1_CH2N25D31QSPI_BK1_IO2PE2(1)QSPI1_IO26D39TIMER_A_PWM3NPE12TIM1_CH3N27GND---28D38TIMER_A_BKIN2PE6TIM1_BKIN229D32TIM_C_PWM1PA0TIM2_CH130D37TIMER_A_BKIN1PE15TIM1_BKIN131D33TIM_D_PWM1PB0TIM3_CH332D36TIMER_C_PWM2PB10TIM2_CH333D34TIM_B_ETRPE0TIM4_ETR34D35TIMER_C_PWM3PB11TIM2_CH4
+
+
+The ST morpho connector consists of two male pin header footprints (CN11 and CN12, both soldered by default). They are used to connect the STM32H7 Nucleo-144 board to an extension board or a prototype/wrapping board placed on the top of the STM32H7 Nucleo- 144 board. All signals and power pins of the STM32H7 are available on the ST morpho connector. An oscilloscope, logical analyzer, or voltmeter can also probe this connector.
+Table 22 shows the pin assignments of each STM32H7 on the ST morpho connector.
+
+Table 22. Pin assignment of the ST morpho connector
+CN11 odd pinsCN11 even pinsCN12 odd pinsCN12 even pinsPin nbrPin namePin nbrPin namePin nbrPin namePin nbrPin name1PC102PC111PC92PC83PC124PD23PB84PC653V3_VDD65V_EXT5PB96PC57BOOT0(1)8GND7VREFP85V_USB_STLK(2)9PF610NC9GND10PD811PF712IOREF11PA512PA1213PA13(3)14NRST13PA614PA1115PA14(3)163V315PA716PB1217PA15185V17PB618PB1119GND20GND19PC720GND21PB722GND21PA922PB223PC1324VIN23PA824PB125PC1426NC25PB1026PB1527PC1528PA027PB428PB1429PH030PA129PB530PB1331PH132PA431PB332AGND33VBAT34PB033PA1034PC435PC236PC135PA236PF537PC338PC037PA338PF439PD440PD339GND40PE841PD542PG241PD1342PF1043PD644PG343PD1244PE745PD746PE245PD1146PD1447PE348PE447PE1048PD1549GND50PE549PE1250PF1451PF152PF251PE1452PE953PF054PF853PE1554GND
+Table 22. Pin assignment of the ST morpho connector (continued)
+CN11 odd pinsCN11 even pinsCN12 odd pinsCN12 even pinsPin nbrPin namePin nbrPin namePin nbrPin namePin nbrPin name55PD156PF955PE1356PE1157PD058PG157PF1358PF359PG060GND59PF1260PF1561PE162PE661PG1462PF1163PG964PG1563GND64PE065PG1266PG1065PD1066PG867NC68PG1367PG768PG569PD970PG1169PG470PG61. The default state of BOOT0 is 0. It can be set to 1 when a jumper is plugged into CN11 [5-7].
+2. 5V_USB_STLK is the 5 V power coming from the ST-LINKV3 USB connector that rises before and it rises before the +5 V rising on the board.
+3. PA13 and PA14 are shared with SWD signals connected to STLINK-V3E. ST does not recommend using them as I/O pins.
+
+
+
+
+9.1 Product marking
+The stickers located on the top or bottom side of all PCBs provide product information:
+* First sticker: product order code and product identification, generally placed on the main board featuring the target device.
+Example:
+
+* Second sticker: board reference with revision and serial number, available on each PCB.
+Example:
+
+On the first sticker, the first line provides the product order code, and the second line the product identification.
+On the second sticker, the first line has the following format: "MBxxxx-Variant-yzz", where "MBxxxx" is the board reference, "Variant" (optional) identifies the mounting variant when several exist, "y" is the PCB revision and "zz" is the assembly revision, for example B01. The second line shows the board serial number used for traceability.
+Parts marked as "ES" or "E" are not yet qualified and therefore not approved for use in production. ST is not responsible for any consequences resulting from such use. In no event will ST be liable for the customer using any of these engineering samples in production.
+ST's Quality department must be contacted prior to any decision to use these engineering samples to run a qualification activity.
+"E" or "ES" marking examples of location:
+* On the targeted STM32 that is soldered on the board (for an illustration of STM32 marking, refer to the STM32 datasheet Package information paragraph at the www.st.com website).
+* Next to the evaluation tool ordering part number that is stuck or silk-screen printed on the board.
+Some boards feature a specific STM32 device version, which allows the operation of any bundled commercial stack/library available. This STM32 device shows a "U" marking option at the end of the standard part number and is not available for sales.
+To use the same commercial stack in their applications, the developers might need to purchase a part number specific to this stack/library. The price of those part numbers includes the stack/library royalties.
+
+9.2 Nucleo-144 boards (MB1364) product history
+Table 23. Product history
+Order code  Product identification
+Product detailsProduct change description
+Product limitations
+NUCLEO-H743ZI2
+
+
+
+
+NUH743ZI$AT1MCU:
+- STM32H743ZIT6
+revision 'V'
+
+
+
+
+Initial revision
+
+The IDD measurement of the STM32H7x3 MCU
+cannot be performed in Standby mode because of ETH PHY (U15) and the pull-up resistors (R40, R43, R46, R47, and R48)
+supplied by VDD_MCU.MCU errata sheet:
+- STM32H742xI/G and
+STM32H743xI/G device limitations (ES0392)Board:
+- MB1364-H743ZI-C01
+(main board)
+
+
+
+
+NUH743ZI$AT2MCU:
+- STM32H743ZIT6
+revision 'V'
+The IDD measurement of the STM32H7x3 MCU can be measured in Standby mode. The ETH PHY is powered by VDD and is separated from VDD_MCU.
+The silkscreen is corrected on the morpho connectors.
+
+
+
+
+No limitationMCU errata sheet:
+- STM32H742xI/G and
+STM32H743xI/G device limitations (ES0392)Board:
+- MB1364-H743ZI-E01
+(main board)
+NUCLEO-H753ZI
+
+
+
+
+NUH753ZI$AT1MCU:
+- STM32H753ZIT6
+revision 'V'
+
+
+
+
+Initial revision
+
+The IDD measurement of the STM32H7x3 MCU
+cannot be performed in Standby mode because of ETH PHY (U15) and the pull-up resistors (R40, R43, R46, R47, and R48)
+supplied by VDD_MCU.MCU errata sheet:
+- STM32H750xB and
+STM32H753xI device limitations (ES0396)Board:
+- MB1364-H753ZI-C01
+(main board)
+
+
+
+
+NUH753ZI$AT2MCU:
+- STM32H753ZIT6
+revision 'V'
+The IDD measurement of the STM32H7x3 MCU can be measured in Standby mode. The ETH PHY is powered by VDD and is separated from VDD_MCU.
+The silkscreen is corrected on the morpho connectors.
+
+
+
+
+No limitationMCU errata sheet:
+- STM32H750xB and
+STM32H753xI device limitations (ES0396)Board:
+- MB1364-H753ZI-E01
+(main board)
+
+
+Order code  Product identification
+Product detailsProduct change description
+Product limitations
+NUCLEO-H723ZG
+
+
+
+NUH723ZG$AT1MCU:
+- STM32H723ZGT6
+revision 'Z'
+
+
+
+Initial revision
+
+
+
+No limitationMCU errata sheet:
+- STM32H72xx/73xx device errata (ES0491)Board:
+- MB1364-H723ZG-E01
+(main board)
+
+
+
+
+NUH723ZG$AT2MCU:
+- STM32H723ZGT6
+revision 'Z'
+
+
+
+Packaging: Plastic blister replaced by a carton box
+
+
+
+
+No limitationMCU errata sheet:
+- STM32H72xx/73xx device errata (ES0491)Board:
+- MB1364-H723ZG-E01
+(main board)
+9.3 Board revision history
+
+Table 24. Board revision history
+
+Board referenceBoard variant and revisionBoard change description
+Board limitationsThe IDD measurement ofthe STM32H7x3 MCU
+MB1364-H743ZI-C01 MB1364-H753ZI-C01
+Initial revisioncannot be performed in Standby mode because of ETH PHY (U15) and the
+pull-up resistors (R40,R43, R46, R47, and R48)supplied by VDD_MCU.MB1364The IDD measurement of(main board)the STM32H7x3 MCU canbe measured in StandbyMB1364-H743ZI-E01 MB1364-H753ZI-E01mode. The ETH PHY is powered by VDD and is
+separated from
+No limitationMB1364-H723ZG-E01VDD_MCU.The silkscreen has beencorrected on the morphoconnectors.
+
+ISED Canada Compliance Statements
+
+10.1 FCC Compliance Statement
+Part 15.19
+This device complies with part 15 of the FCC Rules. Operation is subject to the following two conditions: (1) this device may not cause harmful interference, and (2) this device must accept any interference received, including interference that may cause undesired operation.
+
+Part 15.21
+Any changes or modifications to this equipment not expressly approved by STMicroelectronics may cause harmful interference and void the user's authority to operate this equipment.
+Part 15.105
+This equipment has been tested and found to comply with the limits for a Class B digital device, pursuant to part 15 of the FCC Rules. These limits are designed to provide reasonable protection against harmful interference in a residential installation. This equipment generates uses and can radiate radio frequency energy and, if not installed and used in accordance with the instructions, may cause harmful interference to radio communications. However, there is no guarantee that interference will not occur in a particular installation. If this equipment does cause harmful interference to radio or television reception, which can be determined by turning the equipment off and on, the user is encouraged to try to correct the interference by one or more of the following measures:
+* Reorient or relocate the receiving antenna.
+* Increase the separation between the equipment and the receiver.
+* Connect the equipment into an outlet on a circuit different from that to which the receiver is connected.
+* Consult the dealer or an experienced radio/TV technician for help.
+Note:	Use only shielded cables.
+
+Responsible party (in the USA)
+Terry Blanchard
+Americas Region Legal | Group Vice President and Regional Legal Counsel, The Americas STMicroelectronics, Inc.
+750 Canyon Drive | Suite 300 | Coppell, Texas 75019 USA
+Telephone: +1 972-466-7845
+
+
+
+Compliance Statement
+ISED Canada ICES-003 Compliance Label: CAN ICES-3 (B) / NMB-3 (B).
+
+Déclaration de conformité
+Étiquette de conformité à la NMB-003 d'ISDE Canada: CAN ICES-3 (B) / NMB-3 (B).
+
+
+
+
+
+Table 25. Document revision history
+DateRevisionChanges14-Mar-20191Initial version
+
+
+11-Jun-2020
+
+
+2Added:
+- NUCLEO-H723ZG board
+- Section 9 with Board revision history and Known limitations
+Updated:
+- Section 6.3 switch to STLINK-V3E
+- Figure 1 to Figure 5, and Figure 9 to Figure 14
+
+
+
+16-Jun-2023
+
+
+
+3Updated:
+- Table 14 with SB16, SB17, SB81, and SB82 added configurations
+- Table 20 with pin 15 corrected connection
+- Nucleo-144 boards (MB1364) information
+Removed:
+- Direct firmware update in Embedded STLINK-V3E features
+- Former Figure 15 and Figure 16 USB connectors Removed the references to Arm(r) Mbed(tm).12-Oct-20234Added NUH723ZG$AT2 product identification to Table 23.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IMPORTANT NOTICE - READ CAREFULLY
+
+
+STMicroelectronics NV and its subsidiaries ("ST") reserve the right to make changes, corrections, enhancements, modifications, and improvements to ST products and/or to this document at any time without notice. Purchasers should obtain the latest relevant information on ST products before placing orders. ST products are sold pursuant to ST's terms and conditions of sale in place at the time of order acknowledgment.
+
+
+Purchasers are solely responsible for the choice, selection, and use of ST products and ST assumes no liability for application assistance or the design of purchasers' products.
+
+
+No license, express or implied, to any intellectual property right is granted by ST herein.
+
+
+Resale of ST products with provisions different from the information set forth herein shall void any warranty granted by ST for such product.
+
+
+ST and the ST logo are trademarks of ST. For additional information about ST trademarks, refer to www.st.com/trademarks. All other product or service names are the property of their respective owners.
+
+
+Information in this document supersedes and replaces information previously supplied in any prior versions of this document.
+
+
+(c) 2023 STMicroelectronics - All rights reserved
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

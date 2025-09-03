@@ -1,0 +1,774 @@
+
+UM1964
+User manual
+
+Getting started with X-NUCLEO-IHM02A1; two-axis stepper motor driver expansion board based on L6470 for STM32 Nucleo
+
+
+Introduction
+The X-NUCLEO-IHM02A1 is a two-axis stepper motor driver expansion board based on L6470. It provides an affordable and easy to use solution for driving low voltage motor control for stepper motors in your STM32 Nucleo project. The expansion board includes two L6470 fully integrated micro stepping motor drivers for motor stepper control throughmotors high-end motion control commands received via SPI. It is able to drive one or two stepper motors when plugged on an STM32 Nucleo board. This board is equipped with an Arduino(tm) UNO R3 connector and the layout is also compatible with ST morpho connectors. One or more of these expansion boards can be plugged on a STM32 Nucleo board to control one or more stepper motorss. The SPI peripherals from each L6470 are connected in daisy chain configuration.
+
+Figure 1. X-NUCLEO-IHM02A1; two-axis stepper motors driver expansion board based on L6470
+
+
+
+
+
+
+
+
+
+October 2015	DocID028481 Rev 1	1/24
+www.st.com
+
+
+Contents
+1 Getting started	3
+1.1 Hardware and software requirements	4
+2 Hardware description and configuration	5
+2.1 Selecting the SPI lines	10
+2.2 Multi-motor configuration	11
+3 Set-up to try the provided example	12
+4 Board schematic and bill of material	13
+4.1 Bill of material	16
+5 Revision history	23
+
+1 Getting started
+
+The X-NUCLEO-IHM02A1 expansion board extends the application landscape for STM32 Nucleo board user. It directly handles two-axis stepper motors driving, through the L6470, and can be used in a wide range of relevant applications.. The maximum ratings of the L6470 are the following:
+* Power stage supply voltage (VS) from 8 V to 45 V DC;
+* motors phase current up to 3 A r.s.m. (related to the L6470)
+To function correctly, the X-NUCLEO-IHM02A1 (two-axis stepper motors driver expansion board based on L6470) has to be plugged on an STM32 Nucleo board as shown in Figure 2.
+
+Figure 2. X-NUCLEO-IHM02A1 plugged on STM32 Nucleo board
+The interconnection between the STM32 Nucleo board and the X-NUCLEO-IHM02A1 is designed to permit the use of any STM32 Nucleo board. The firmware has been written and tested for the NUCLEO-F401RE, NUCLEO-F302R8 and NUCLEO-F072RB.
+Note:		For correct use of the NUCLEO-F401RE with the X-NUCLEO-IHM02A1, the solder bridge SB15 on the NUCLEO-F401RE has to be removed (see the NUCLEO-F401RE user manual for further information).
+
+
+
+
+
+
+
+
+
+
+
+
+DocID028481 Rev 1	3/24
+
+
+1.1 Hardware and software requirements
+Using the STM32 Nucleo boards with the X-NUCLEO-IHM02A1 expansion board requires the following software and hardware:
+* a Windows PC (XP, Vista, 7, 8) to install the software package;
+* from one to four X-NUCLEO-IHM02A1 expansion boards;
+* an STM32 Nucleo board chosen from among NUCLEO-F401RE, NUCLEO-F302R8 or NUCLEO-F072RB;
+* a USB type A to Mini-B USB cable to connect the STM32 Nucleo board to the PC;
+* the X-CUBE-SPN2 software package (available on www.st.com);
+* an IDE chosen from among IAR Embedded Workbench for ARM (EWARM), keil microcontroller development Kit (MDK-ARM) and System Workbench for STM32 (SW4STM32);
+* two-axis stepper motors with compatible voltage and current for the L6470;
+* an external power supply able to provide the right voltage for the stepper motors used;
+* (optional) a terminal emulator, serial console (i.e. PuTTY) to send commands via USART.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4/24	DocID028481 Rev 1
+
+
+2 Hardware description and configuration
+
+This section describes the X-NUCLEO-IHM02A1 features and provides useful information for understanding the board schematics. Figure 3 shows the position of the connectors and the configuration board jumpers.
+
+Figure 3. Jumper and connector positions
+Below is the detailed pinout of the ST morpho and Arduino(tm) UNO R3 connectors.
+
+Table 1. ST morpho connector table
+ConnectorPinDefaultSignalSolder bridge
+
+
+
+
+
+
+CN71PC102PC113PC124PD25VDD6E5V7BOOT08GND9NC/PF610NC11NC/PF7
+
+
+DocID028481 Rev 1	5/24
+
+
+Table 1. ST morpho connector table (continued)
+ConnectorPinDefaultSignalSolder bridge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CN712IOREF13PA1314RESET15PA1416+3V3+3V3SB4017PA1518+5V+5VSB4019GND20GND21PB722GND23PC1324VIN25PC1426NC27PC1528PA029PH0/PF0/PD030PA131PH1/PF1/PD132PA4L6470 nCSSB2333VLCD/VBAT34PB0ST1S14 PGOODSB635PC236PC1L6470 nFLAG37PC338PC0L6470 nBUSY\SYNC
+
+
+
+
+CIN101PC92PC83PB84PC65PB96PC57AVDD8U5V
+
+6/24	DocID028481 Rev 1
+
+
+Table 1. ST morpho connector table (continued)
+ConnectorPinDefaultSignalSolder bridge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CIN109GND10PD8/NC11PA5/PB13L6470 SCKSB1212PA1213PA6/PB14L6470 #0 SDOSB3214PA1115PA7/PB15L6470 #1 SDISB2616PB1217PB6L6470 nCSSB818PB11/NC19PC720GND21PA922PB223PA824PB125PB1026PB15/PA7L6470 #1 SDISB1027PB4L6470 nCSSB928PB14/PA6L6470 #0 SDOSB1129PB5L6470 nSTBY\nRST30PB13/PA5L6470 SCKSB1331PB3L6470 SCKSB3432AGND33PA10L6470 nCSSB734PC435PA236NC/PF537PA338NC/PF4
+
+
+
+
+
+
+
+DocID028481 Rev 1	7/24
+
+
+
+Table 2. Arduino UNO R3 connector table
+ConnectorPinDefaultSignalSolder bridge
+
+
+
+
+
+CN51D82D9/PWM3D10/CS/PWML6470 nCSSB84D11/MOSI/PWML6470 #1 SDISB265D12/MISOL6470 #0 SDOSB326D13/SCKL6470 SCKSB127NC8NC9D14/SDA10D15/SCL
+
+
+
+
+CN61NC2IOREF3RESET4+3V35+5V6GND7GND8VIN
+
+
+
+CN81A02A13A2L6470 nCSSB234A3ST1S14 PGOODSB65A4L6470 nFLAG6A5L6470 nBUSY\SYNC
+
+
+
+
+CN91D0/RX2D1/TX3D2L6470 nCSSB74D3/PWML6470 SCKSB345D4L6470 nSTBY\nRST6D5/PWML6470 nCSSB97D6/PWM8D7
+
+
+
+
+8/24	DocID028481 Rev 1
+
+
+
+Table 3. Solder bridge table
+Solder bridge
+Function
+Group
+Sub group Default conditionSB1Connect L6470 #0 OSCIN to the crystalExternal crystal
+L6470 #0OpenSB2Connect L6470 #0 OSCOUT to the crystalOpenSB3Connect L6470 #1 OSCIN to the crystal
+L6470 #1OpenSB4Connect L6470 #1 OSCOUT to the crystalOpenSB5Connect L6470 #0 OSCOUT with L6470 #1 OSCINClockSynchronismOpenSB6Connect ST1S14 PGOOD with CN7-34 and CN8-4ST1S14Power goodOpenSB10Connect L6470 #1 SDI with CN10-26
+
+
+
+
+
+
+SPI
+SDIOpenSB26Connect L6470 #1 SDI with CN10-15 and CN5-4ShortSB11Connect L6470 #0 SDO with CN10-28
+SDOOpenSB32Connect L6470 #0 SDO with CN10-13 and CN5-5ShortSB12Connect any L6470 SCK with CN10-11 and CN5-6
+SCKOpenSB13Connect any L6470 SCK with CN10-30OpenSB34Connect any L6470 SCK with CN10-31 and CN9-4ShortSB7Connect any L6470 nCS with CN10-33 and CN9-3
+
+nCSOpenSB8Connect any L6470 nCS with CN10-17 and CN5-3OpenSB9Connect any L6470 nCS with CN10-27 and CN9-6OpenSB23Connect any L6470 nCS with CN7-32 and CN8-3ShortSB40Connect any L6470 VDD to +3V3 of control board
+VDDNucleoShortSB41Connect any L6470 VDD to +5V of control boardArduinoOpen
+Note:	Only one among SB10 and SB26 can be short. Only one among SB11 and SB32 can be short.
+Only one among SB12, SB13 and SB34 can be short. Only one among SB7, SB8, SB9 and SB23 can be short. Only one among SB40 and SB41 can be short.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DocID028481 Rev 1	9/24
+
+
+
+Table 4. Jumper table
+JumperPermitted configurationsDefault condition
+
+
+
+
+J1Selection for L6470 VDD:
+- 2-3 short: ST1S14 is inhibited.
+1-2 short and 3-4 short: ST1S14 is enabled, any L6470 VDD is connected to the +3.3V coming from the ST1S14 (step down monolithic power switching regulator).
+Note: short SB40 if you intend to supply the STM32 Nucleo board through the X-NUCLEO-IHM02A1; if so, refer to the section in the STM32 Nucleo board User Manual (available on www.st.com) regarding external power supply.
+SB40 open otherwise. SB41 must be open.
+
+
+
+
+2-3 short
+J2Selection for L6470 external switch input pin:
+- Connect a limit switch between 1-2 or 3-4 for L6470 #1.
+- Connect a limit switch between 5-6 or 7-8 for L6470 #0
+All openJ3Step-clock input for L6470 #0.OpenJ4Step-clock input for L6470 #1.Open
+Note:	If SB41 is short then J1 pins 2 and 3 must also be shorted.
+
+Table 5. Screw terminal table
+Screw terminalFunctionST1To connect the two couples of wires connected to the two motors phases with the two full bridge output couples of L6470 #1.ST2To connect the two couples of wires connected to the two motors phases with the two full bridge output couples of L6470 #0.ST3motors power supply input (8V÷45V).
+2.1 Selecting the SPI lines
+The lines of the SPI interface can be selected through the dedicated solder bridges. The following table (Table 6) shows the possible options for the STM32 Nucleo board and Arduino Uno R3.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10/24	DocID028481 Rev 1
+
+
+
+Table 6. SPI lines table
+
+SPI wire
+Solder bridge
+
+NUCLEO-F401RE
+
+NUCLEO-F302R8
+
+NUCLEO-F072RB
+ARDUINO UNO R3
+ST morpho connector
+ARDUINO
+Connector
+
+SDISB10   PB15 SPI2_MOSIPA7 (1)   PB15 SPI2_MOSI/CN10-26/SB26   PA7 SPI1_MOSI   PB15 SPI2_MOSI   PA7 SPI1_MOSI D11 MOSICN10-15CN5-4
+
+SDOSB11   PB14 SPI2_MISOPA6 (1)   PB14 SPI2_MISO/CN10-28/SB32   PA6 SPI1_MISO   PB14 SPI2_MISO   PA6 SPI1_MISO D12 MISOCN10-13CN5-5
+
+
+SCKSB12   PA5 SPI1_SCK  PB13 SPI2_SCK   PA5 SPI1_SCKD13 SCKCN10-11CN5-6SB13  PB13 SPI2_SCKPA5 (1)  PB13 SPI2_SCK/CN10-30/SB34   PB3 SPI1_SCKPB3 (1)   PB3 SPI1_SCKD3 (1)CN10-31CN9-4
+
+
+nCSSB7PA10PA10PA10D2 (1)CN10-33CN9-3SB8PB6PB6PB6D10 CSCN10-17CN5-3SB9PB4PB4PB4D5 (1)CN10-27CN9-6SB23PA4PA4PA4A2 (1)CN7-32CN8-31. Not applicable.
+
+Note:	Default shorted solder bridges are written in bold.
+
+
+2.2 Multi-motors configuration
+It is possible to synchronously drive two-axis stepper motors with one X-NUCLEO-IHM02A1 board only. However, up to four X-NUCLEO-IHM02A1 expansion boards can be stacked on a single STM32 Nucleo board, so it is possible to drive up to eight stepper motors. Each X- NUCLEO-IHM02A1 expansion board is addressable through the nCS pin that must be connected to one pin only of the microcontroller. So, when using more than one expansion board, the user must short a different solder bridge among SB7, SB8, SB9 and SB23, for each X-NUCLEO-IHM02A1. Be sure to align the firmware with any hardware change.
+
+
+
+
+
+
+
+
+DocID028481 Rev 1	11/24
+
+
+3 Set-up to try the provided example
+
+Follow this sequence to start your project with the board:
+1. Choose an STM32 Nucleo board from among NUCLEO-F401RE, NUCLEO-F302R8 and NUCLEO-F072RB.
+2. Get the right firmware from the X-CUBE-SPN2 (available on www.st.com) for the chosen STM32 Nucleo board and program it properly.
+- X-CUBE-SPN2_F401.bin for NUCLEO-F401RE
+- X-CUBE-SPN2_F302.bin for NUCLEO-F302R8
+- X-CUBE-SPN2_F072.bin for NUCLEO-F072RB
+3. Disconnect the STM32 Nucleo board from the PC.
+4. Put a jumper between pin 2 and 3 of J1.
+5. Leave all J2 pins open.
+6. Check the solder bridges meet the default configuration (see Table 3).
+7. Connect two stepper motors to ST1 and ST2.
+8. Stack the X-NUCLEO-IHM02A1 expansion board on an STM32 Nucleo board through ST morpho or Arduino UNO R3 connectors.
+9. Supply the board through the pin 1 (GND) and 2 (VS) of the connector ST3 with 9.0 V DC. The green LEDs D1 and D4 will turn on to show each L6470 VREG is on.
+10. Connect the STM32 Nucleo board to the PC via USB type A to Mini-B USB cable. The orange LED D9 will turn on to show the digital voltage is on.
+11. The two connected stepper motors will perform a few movements.
+Note:	The example is set to use motors such as the hybrid stepping motor 42BYGHM809 by Wantai Motor. If your motors have different parameters, modify the array named "MotorParameterInitData" in the "params.c" source file accordingly.
+You can now proceed to develop your application using the examples provided with the firmware library (X-CUBE-SPN2) with yourpreferred IDE among IAR EWARM, Keil MDK- ARM and Open STM32 SW4STM32.
+Note:	Further support material regarding L6470, X-NUCLEO-IHM02A1, X-CUBE-SPN2 and STM32 Nucleo board is available on www.st.com.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12/24	DocID028481 Rev 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Figure 7. Schematic - step-down monolithic switching regulator
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4.1 Bill of material
+
+Table 7. BOM (part 1)
+ItemQtyReferencePart/valueTol %Voltage / currentWatt11CN5ARDUINO_10x122CN6, CN9ARDUINO_8x132CN7, CN10ST_MORPHO_19x241CN8ARDUINO_6x154C1, C11, C17, C27100nF0.16.3V62C2, C1810uF0.16.3V78C3, C4, C5, C6, C19, C20, C21, C22100nF0.150V82C7, C23100uF0.263V92C8, C241nF0.16.3V104C9, C10, C25, C2618pF0.056.3V112C12, C2847uF0.16.3V122C13, C293.3nF0.16.3V132C14, C30220nF0.116V
+
+
+16/24	DocID028481 Rev 1
+
+Table 7. BOM (part 1) (continued)
+ItemQtyReferencePart/valueTol %Voltage / currentWatt142C15, C3110nF0.16.3V152C16, C3210nF0.150V164C33, C34, C40, C41100pF0.056.3V172C35, C37100nF0.1100V181C364.7uF0.2100V191C385.1pF0.150V201C3947uF0.16.3V212D1, D4GREEN_LED222D2, D5BZX84J-C3V60.053.6V0.25W232D3, D6BAV99215mA/100V241D7YELLOW_LED251D8RED_LED261D9ORANGE_LED271D10STPS1L6060V / 2A281D11SMAJ48A48V291J1CON4301J2CON8312J3, J4CON1321L127uH0.22.3A332R1, R65600.010.1W344R2, R7, R21, R2239k0.010.1W352R3, R862k0.010.1W362R4, R99.76k0.010.1W372R5, R101000.010.1W383R28, R29, R306200.010.1W391R3747k0.010.1W401R38100k0.010.1W411R3959k0.010.1W
+
+DocID028481 Rev 1	17/24
+
+Table 7. BOM (part 1) (continued)
+ItemQtyReferencePart/valueTol %Voltage / currentWatt
+42
+13SB1, SB2, SB3, SB4, SB5, SB6, SB7, SB8, SB9, SB10, SB11, SB12, SB13
+0
+0.01
+0.1W435SB23, SB26, SB32, SB34, SB4000.010.1W441SB4100.010.1W452ST1, ST24 terminals400V461ST32 terminals400V472U1, U2L6470PD481U3ST1S14492Y1, Y216MHz
+
+Table 8. BOM (part 2)
+ItemTechnology informationPackageManufacturer1ELEVATED SOCKETTH4UCONN2ELEVATED SOCKETTH4UCONN3ELEVATED SOCKETTH4UCONN4ELEVATED SOCKETTH4UCONN5X7R Ceramic Multilayer CapacitorsSMD 0603any6X5R Ceramic Multilayer CapacitorsSMD 0805TDK7X7R Ceramic Multilayer CapacitorsSMD 0603any8Aluminium Electrolytic CapacitorSMD 10mm x 10.5mmNichicon9X7R Ceramic Multilayer CapacitorsSMD 0603any10C0G Ceramic Multilayer CapacitorSMD 0603any11Tantalum capacitorSMD 1206AVX12X7R Ceramic Multilayer CapacitorsSMD 0603any13X7R Ceramic Multilayer CapacitorsSMD 0603any14X7R Ceramic Multilayer CapacitorsSMD 0603any15X7R Ceramic Multilayer CapacitorsSMD 0603any16C0G Ceramic Multilayer CapacitorsSMD 0603any
+18/24	DocID028481 Rev 1
+
+Table 8. BOM (part 2) (continued)
+ItemTechnology informationPackageManufacturer17X7R Ceramic Multilayer CapacitorSMD 0805TDK18X7S Dielectric Ceramic MultilayerSMD 1210TDK19C0G Ceramic Multilayer CapacitorSMD 0603any20Tantalum Electrolytic CapacitorSMC 3528-21AVX21LEDSMD 0603Lite-On22Zener diodeSOT23NXP23Switching diodeSOT23NXP24LEDSMD 0603Lite-on25LEDSMD 0603Lite-on26LEDSMD 0603Lite-on27Power Schottky rectifierSMAST28TransilJEDEC DO-214ACST292.54 PIN HEADER SINGLE ROW 4 PINTH 2.54 mm pitch4UCONN302.54 PIN HEADER DUAL ROW 2x4 PINTH 2.54 mm pitch4UCONN3132Shielded Wire-wound SMD InductorSMD 12x12mmPanasonic33metal film SMD resistorSMD 0603any34metal film SMD resistorSMD 0603any35metal film SMD resistorSMD 0603any36metal film SMD resistorSMD 0603any37metal film SMD resistorSMD 0603any38metal film SMD resistorSMD 0603any39metal film SMD resistorSMD 0603any40metal film SMD resistorSMD 0603any41metal film SMD resistorSMD 0603any42SMD 0603any43SMD 0603any44SMD 0603any
+
+DocID028481 Rev 1	19/24
+
+Table 8. BOM (part 2) (continued)
+ItemTechnology informationPackageManufacturer45Through Hole 4 Way Screw Terminal (2x 2way connector)TH 3.81 mm pitch4UCONN46Through Hole 2 Way Screw TerminalTH 3.81 mm pitch4UCONN47dSPIN Microstepping Driver with Motion Engine and SPIPOWERSO36ST48step-down switching regulatorHSOP8ST49Crystal / Ceramic ResonatorHC-49-US SMDAbracon
+
+Table 9. BOM (part 3)
+ItemManufacturer codeSupplierSupplier codeMore info115286    Alternative: Samtec ESQ-110-24-T-S Mounting info: female on top, male on bottom215284    Alternative: Samtec ESQ-108-24-T-S Mounting info: female on top, male on bottom
+3
+8413Alternative: Samtec: ESQ-119-24-T-D Mounting info: male on top, female on bottom Not Mounted415282    Alternative: Samtec ESQ-106-24-T-S Mounting info: female on top, male on bottom56C2012X5R0J106K125ABDigi-Key445-4113-2-NDAlternative: Murata GRM21BR60J106KE19L78UUX1J101MNL1GSDigi-key493-7453-2-NDAlternative: Panasonic EEEFK1J101P, Farnell 2254433910Not Mounted11TAJA476K006RNJFarnell221722412Not Mounted1314151617C2012X7R2A104K125AADigi-Key445-1418-2-NDAlternative: Murata GCM21BR72A104KA37L
+
+20/24	DocID028481 Rev 1
+
+Table 9. BOM (part 3) (continued)
+ItemManufacturer codeSupplierSupplier codeMore info18C3225X7S2A475M200ABDigi-Key445-6043-2-ND1920TPSB476M006R0350Digi-KeyTPSB476M006R0 350-ND21LTST-C191KGKTRS692-101022BZX84J-C3V6RS436-8215Not Mounted23BAV99RS792-079624LTST-C193KSKT-5ARS692-105425LTST-C193KRKT-5ARS692-104126LTST-C193KFKT-5ARS692-103227STPS1L60A28SMAJ48A-TR292099Alternative RS:156-0493019670Alternative: MULTICOMP 2213S-08G, Farnell 159344131Not Mounted32ELL-CTV270MDigi-KeyPCD2157CT-ND333435Not Mounted36Not Mounted373839404142Not Mounted4344Not Mounted
+
+DocID028481 Rev 1	21/24
+
+Table 9. BOM (part 3) (continued)
+ItemManufacturer codeSupplierSupplier codeMore info4512342Alternative: Phoenix Contact MKDS 1/ 4-3,814612342Alternative: Phoenix Contact MKDS 1/ 2-3,8147L6470PD48ST1S1449ABLS-16.000MHz-B2RS703-1818Not Mounted
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+22/24	DocID028481 Rev 1
+
+5	Revision history
+
+Table 10. Document revision history
+DateRevisionChanges15-Oct-20151Initial release.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DocID028481 Rev 1	23/24
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IMPORTANT NOTICE - PLEASE READ CAREFULLY
+
+
+STMicroelectronics NV and its subsidiaries ("ST") reserve the right to make changes, corrections, enhancements, modifications, and improvements to ST products and/or to this document at any time without notice. Purchasers should obtain the latest relevant information on ST products before placing orders. ST products are sold pursuant to ST's terms and conditions of sale in place at the time of order acknowledgement.
+
+
+Purchasers are solely responsible for the choice, selection, and use of ST products and ST assumes no liability for application assistance or the design of Purchasers' products.
+
+
+No license, express or implied, to any intellectual property right is granted by ST herein.
+
+
+Resale of ST products with provisions different from the information set forth herein shall void any warranty granted by ST for such product.
+
+
+ST and the ST logo are trademarks of ST. All other product or service names are the property of their respective owners.
+
+
+Information in this document supersedes and replaces information previously supplied in any prior versions of this document.
+
+
+(c) 2015 STMicroelectronics - All rights reserved
+
+
+
+
+24/24	DocID028481 Rev 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

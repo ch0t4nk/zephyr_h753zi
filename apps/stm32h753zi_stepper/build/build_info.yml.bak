@@ -1,0 +1,4 @@
+west:
+  command: /home/joeyw/zephyr-dev/.venv/bin/west build --pristine -b nucleo_h753zi
+  topdir: /home/joeyw/zephyr-dev/zephyr
+  version: 1.4.0

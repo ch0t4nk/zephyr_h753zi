@@ -1,0 +1,16 @@
+---
+- name: 17HS3001-20B
+  steps_per_rev: 200
+  max_speed: 1200      # steps/sec
+  max_current: 1200    # mA
+  max_microstep: 16
+  rated_voltage: 2.0   # V
+  holding_torque: 0.4  # Nm
+
+- name: NEMA23-HighTorque
+  steps_per_rev: 200
+  max_speed: 2000
+  max_current: 3000
+  max_microstep: 128
+  rated_voltage: 3.0
+  holding_torque: 1.2

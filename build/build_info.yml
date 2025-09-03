@@ -1,0 +1,61 @@
+cmake:
+  application:
+    configuration-dir: '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper'
+    source-dir: '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper'
+  board:
+    name: 'nucleo_h753zi'
+    path:
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/boards/st/nucleo_h753zi'
+    qualifiers: 'stm32h753xx'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/bindings'
+    files:
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/boards/st/nucleo_h753zi/nucleo_h753zi.dts'
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/nucleo_h753zi.overlay'
+    include-dirs:
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/ambiq/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/atmel/include'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/bouffalolab/include'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/bouffalolab/include/zephyr'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/gigadevice/include'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/microchip/include'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/microchip/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/nuvoton/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/nxp/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/stm32/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/modules/hal/ti/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/include'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/common'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/vendor'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/rx'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/x86'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/xtensa'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/sparc'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/riscv'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/posix'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/arm64'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/arm'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts/arc'
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/dts'
+    user-files:
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/nucleo_h753zi.overlay'
+  kconfig:
+    files:
+     - '/home/joeyw/zephyr-dev/zephyr/zephyr/boards/st/nucleo_h753zi/nucleo_h753zi_defconfig'
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/prj.conf'
+    user-files:
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/prj.conf'
+  toolchain:
+    name: 'zephyr'
+    path: '/home/joeyw/zephyr-sdk-0.17.2'
+  zephyr:
+    version: '4.2.99'
+    zephyr-base: '/home/joeyw/zephyr-dev/zephyr/zephyr'
+version: '0.1.0'
+west:
+  command: '/home/joeyw/zephyr-dev/.venv/bin/west build -b nucleo_h753zi apps/stm32h753zi_stepper --pristine'
+  topdir: '/home/joeyw/zephyr-dev/zephyr'
+  version: '1.4.0'

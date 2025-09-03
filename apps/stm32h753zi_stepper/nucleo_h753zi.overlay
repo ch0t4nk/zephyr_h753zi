@@ -1,0 +1,17 @@
+// Device tree overlay for STM32H753ZI stepper application
+// The board default configuration already uses USART3 (PD8/PD9) for console
+// which is connected to ST-LINK VCP, so no changes needed
+
+/ {
+    // No changes needed - using board defaults
+};
+
+// Include the IHM02A1 shield configuration directly
+#include "boards/shields/x_nucleo_ihm02a1/x_nucleo_ihm02a1.overlay"
+
+&flash0 {
+    /* Rely on the board's canonical `storage` partition defined in
+     * the nucleo_h753zi board DTS (offset 0x00020000, 128KB). Removing
+     * the app-level partition avoids duplicate labels and flash conflicts.
+     */
+};

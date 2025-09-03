@@ -1,0 +1,3 @@
+name: x_nucleo_ihm02a1
+version: 0.1.0
+description: "Template shield descriptor for ST X-NUCLEO-IHM02A1 (IHM02A1 stepper-driver)."

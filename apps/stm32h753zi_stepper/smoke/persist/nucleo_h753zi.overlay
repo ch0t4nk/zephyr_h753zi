@@ -1,0 +1,13 @@
+/* Overlay: enlarge storage partition so LittleFS has multiple erase blocks
+ * Original board partition: reg = <0x20000 0x20000> (offset 0x20000, size 0x20000)
+ * Increase size to 0x40000 (256 KiB) to span two 128 KiB erase units.
+ */
+
+&flash0 {
+    partitions {
+        storage_partition: partition@20000 {
+            reg = <0x00020000 0x00040000>;
+            label = "storage";
+        };
+    };
+};

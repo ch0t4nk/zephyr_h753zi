@@ -1,0 +1,91 @@
+/* Local shield overlay for X-NUCLEO-IHM02A1 (L6470 dSPIN, 2x stepper).
+ *
+ * Wiring (Arduino R3 on Nucleo-H753ZI):
+ *   - SPI1: SCK=D13 (PA5), MISO=D12 (PA6), MOSI=D11 (PB5), CS=D10 (PD14)
+ *   - FLAG:    D2  (PG14) active low (input)
+ *   - BUSY:    D3  (PE13) active high (input)  [BUSY/SYNC]
+ *   - STBY/RESET: D4 (PE14) active low (output)
+ */
+
+/ {
+    chosen {
+        /* Keep the board's default console */
+        zephyr,console = &usart3;
+    };
+};
+
+/* The nucleo_h753zi board exposes Arduino aliases:
+ *   &arduino_spi -> SPI1 (SCK=D13/PA5, MISO=D12/PA6, MOSI=D11/PB5)
+ *   &arduino_header -> GPIO map where D10 is index 16 (PD14)
+ */
+&arduino_spi {
+    status = "okay";
+    spidev: spi-device@0 {
+        compatible = "zephyr,spidev";
+        reg = <0>;
+    /* Set for real-time motion control: 20 MHz (L6470 supports up to 10+ MHz, STM32H7 supports much higher). */
+    spi-max-frequency = <20000000>;
+    /* Provide CS on Arduino D10 (PD14) so the SPI driver can toggle it */
+    cs-gpios = <&gpiod 14 GPIO_ACTIVE_LOW>;
+        /* If needed after validation, set SPI mode:
+         *   spi-cpol; spi-cpha;  // for MODE3
+         */
+        status = "okay";
+    };
+};
+
+/* Expose control pins via simple nodes with a 'gpios' property, so the
+ * application can fetch them using GPIO_DT_SPEC_GET(DT_NODELABEL(...), gpios)
+ */
+
+/ {
+    /* Explicit Arduino header pin mappings used by the shield
+     * D10: CS  -> PD14
+     * D11: MOSI-> PB5  (provided via &arduino_spi)
+     * D12: MISO-> PA6  (provided via &arduino_spi)
+     * D13: SCK -> PA5  (provided via &arduino_spi)
+     */
+
+    ihm02a1_cs: ihm02a1-cs {
+        gpios = <&gpiod 14 GPIO_ACTIVE_LOW>; /* D10: PD14 */
+        status = "okay";
+    };
+
+    ihm02a1_flag: ihm02a1-flag {
+        gpios = <&gpiog 14 GPIO_ACTIVE_LOW>;  /* D2: PG14 */
+        status = "okay";
+    };
+
+    ihm02a1_busy: ihm02a1-busy {
+        gpios = <&gpioe 13 GPIO_ACTIVE_HIGH>; /* D3: PE13 */
+        status = "okay";
+    };
+
+    ihm02a1_reset: ihm02a1-reset {
+        gpios = <&gpioe 14 GPIO_ACTIVE_LOW>; /* D4: PE14 */
+        status = "okay";
+    };
+
+    /* Optional VMOT switch node: expose a GPIO used to enable/disable
+     * the motor supply (VMOT) on the expansion board. The reference
+     * X-NUCLEO-IHM02A1 does not provide a switched VMOT by default; add
+     * this node on boards that wire a FET or transistor to an Arduino
+     * header pin (e.g., PE11 -> Arduino D5).
+     */
+    ihm02a1_vmot_switch: ihm02a1-vmot-switch {
+        gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>; /* PE11 = Arduino D5 (active high) */
+        status = "okay";
+    };
+
+    /* If you prefer, use the `ihm02a1-cs` node above to control a per-device
+     * chip-select on D10 (PD14). The node above is active-low.
+     */
+
+    /* Note: according to ST UM1964 the shield's VMOT (motor supply) is fed
+     * from the shield's external power connector and is not switched by
+     * any Arduino header pin. There is no FET/switch on the reference PCB
+     * tied to an Arduino GPIO to cut VMOT. If you need programmatic
+     * control of VMOT, add an external high-side/low-side switch controlled
+     * by a GPIO on the Nucleo and wire that into the shield's VMOT feed.
+     */
+};

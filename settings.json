@@ -1,0 +1,27 @@
+{
+  "zephyr.zephyrBase": "/home/joeyw/zephyr-dev/zephyr/zephyr",
+  "zephyr.sdkPath": "/home/joeyw/zephyr-sdk-0.17.2",
+  "zephyr.westPath": "/home/joeyw/zephyr-dev/.venv/bin/west",
+  "python.defaultInterpreterPath": "/home/joeyw/zephyr-dev/.venv/bin/python",
+  "terminal.integrated.env.linux": {
+    "VIRTUAL_ENV": "/home/joeyw/zephyr-dev/.venv",
+    "PATH": "/home/joeyw/zephyr-dev/.venv/bin:${env:PATH}"
+  },
+  "zephyr.defaultBoard": "nucleo_h753zi",
+  "terminal.integrated.profiles.linux": {
+    "zephyr-env": {
+      "path": "/bin/bash",
+      "args": [
+        "--rcfile",
+        "${workspaceFolder}/zephyr/zephyr/zephyr-env.sh"
+      ],
+      "icon": "terminal-bash",
+      "overrideName": true
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "zephyr-env",
+  "cmake.ignoreCMakeListsMissing": true,
+  "cmake.configureOnOpen": false,
+  "cmake.enableAutomaticKitScan": false,
+  "cmake.sourceDirectory": "/home/joeyw/zephyr-dev/zephyr/zephyr"
+}
