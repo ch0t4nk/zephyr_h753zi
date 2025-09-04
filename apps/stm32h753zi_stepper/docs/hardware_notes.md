@@ -15,7 +15,7 @@ Hardware Notes - X-NUCLEO-IHM02A1 and Nucleo-H753ZI
 
   Then in the driver use GPIO_DT_SPEC_GET(IHM02A1_VMOT_NODE, gpios) and avoid hard-coded device_get_binding("GPIOE").
 
-- Schematic: See `docs/x-nucleo-ihm02a1_schematic.pdf` for the shield motor supply wiring and lack of onboard VMOT switch.
+- Schematic: See `reference/User_Manuals/x-nucleo-ihm02a1_schematic.pdf` for the shield motor supply wiring and lack of onboard VMOT switch.
 
 2) SPI frequency (overlay vs runtime)
 
@@ -33,10 +33,10 @@ Hardware Notes - X-NUCLEO-IHM02A1 and Nucleo-H753ZI
 3) Spec links and references
 
 - L6470: See the STMicroelectronics L6470 datasheet; focus on the "Serial Interface" / "Digital Interface" sections for opcode timing and maximum SCLK frequency.
-- Nucleo-H753ZI: See UM2407 and the board schematics for Arduino header pin mapping (PE11 = Arduino D5). The repo contains a local excerpt of UM2407 under `docs/`.
+- Nucleo-H753ZI: See UM2407 and the board schematics for Arduino header pin mapping (PE11 = Arduino D5). The repo contains a local excerpt of UM2407 under `reference/User_Manuals/`.
 
 4) Quick action items
 
 - Add DT node for `ihm02a1_vmot_switch` if you need explicit VMOT control from software.
-- Add a line in the README referencing `docs/x-nucleo-ihm02a1_schematic.pdf` and this hardware_notes.md.
+- Add a line in the README referencing `reference/User_Manuals/x-nucleo-ihm02a1_schematic.pdf` and this hardware_notes.md.
 
