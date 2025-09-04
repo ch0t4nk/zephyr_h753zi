@@ -4,7 +4,7 @@
 		{
 			"label": "Zephyr: Build blinky (nucleo_h753zi)",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b nucleo_h753zi zephyr/samples/basic/blinky",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi zephyr/samples/basic/blinky -d $HOME/zephyr-dev/build/blinky -p always",
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -13,200 +13,57 @@
 				"reveal": "always",
 				"panel": "shared"
 			},
-			"problemMatcher": []
+			"problemMatcher": ["$gcc"]
 		},
 		{
-			"label": "Zephyr: Flash (OpenOCD)",
+			"label": "Zephyr: Build stm32h753zi_stepper",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir build --runner openocd",
-			"group": "none",
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Zephyr: Build stm32h753zi_stepper (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Zephyr: Flash stm32h753zi_stepper (OpenOCD)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir build --runner openocd",
-			"group": "none"
-		},
-		{
-			"label": "Zephyr: Rebuild after L6470 changes",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/h753zi -p always",
+			"group": "build",
+			"problemMatcher": ["$gcc"]
 		},
 		{
 			"label": "Zephyr: Incremental build",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/h753zi",
+			"group": "build",
+			"problemMatcher": ["$gcc"]
 		},
 		{
-			"label": "Zephyr: Flash (OpenOCD)",
+			"label": "Zephyr: Flash stm32h753zi_stepper (OpenOCD)",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir build --runner openocd",
-			"group": "none"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir $HOME/zephyr-dev/build/h753zi --runner openocd",
+			"group": "none",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Build native_posix l6470 tests",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_posix apps/stm32h753zi_stepper -d build/native",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_posix apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/native -p always",
+			"group": "build",
+			"problemMatcher": ["$gcc"]
 		},
 		{
 			"label": "Build native_sim l6470 tests",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper -d build/native",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/native -p always",
+			"group": "build",
+			"problemMatcher": ["$gcc"]
 		},
 		{
-			"label": "Build native_sim unit tests (pristine)",
+			"label": "Build native_sim unit tests",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d $HOME/zephyr-dev/build/native_unit -p always",
+			"group": "build",
+			"problemMatcher": ["$gcc"]
 		},
 		{
-			"label": "Build native_sim unit tests (pristine)",
+			"label": "Rebuild native_sim unit tests (with ctest)",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Build native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine && ctest --test-dir build/native_unit -V",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine && ctest --test-dir build/native_unit -V",
-			"group": "build"
-		},
-		{
-			"label": "Rebuild native_sim unit tests (pristine)",
-			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit --pristine && ctest --test-dir build/native_unit -V",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d $HOME/zephyr-dev/build/native_unit -p always && ctest --test-dir $HOME/zephyr-dev/build/native_unit -V",
 			"group": "build"
 		}
 	]
