@@ -36,9 +36,6 @@ case K_OBJ_RTIO: ret = "rtio"; break;
 #ifdef CONFIG_RTIO
 case K_OBJ_RTIO_IODEV: ret = "rtio_iodev"; break;
 #endif
-#ifdef CONFIG_RTIO
-case K_OBJ_RTIO_POOL: ret = "rtio_pool"; break;
-#endif
 #ifdef CONFIG_SENSOR_ASYNC_API
 case K_OBJ_SENSOR_DECODER_API: ret = "sensor_decoder_api"; break;
 #endif

@@ -1,5 +1,5 @@
 west:
   command: /home/joeyw/zephyr-dev/.venv/bin/west build -b native_sim apps/stm32h753zi_stepper/tests/unit
-    -d build/native_unit --pristine
-  topdir: /home/joeyw/zephyr-dev/zephyr
+    -d build/native_unit -p always
+  topdir: /home/joeyw/zephyr-dev
   version: 1.4.0

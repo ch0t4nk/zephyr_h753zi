@@ -7,8 +7,8 @@ NSI_OBJCOPY:=/usr/bin/objcopy
 NSI_EMBEDDED_CPU_SW:=/home/joeyw/zephyr-dev/build/native_unit/zephyr/zephyr.elf 
 NSI_EXE:=/home/joeyw/zephyr-dev/build/native_unit/zephyr/zephyr.exe
 NSI_EXTRA_SRCS:=
-NSI_LINK_OPTIONS:=-m32 -T /home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/common/natsim_linker_script.ld
+NSI_LINK_OPTIONS:=-m32 -T /home/joeyw/zephyr-dev/zephyr/boards/native/common/natsim_linker_script.ld
 NSI_EXTRA_LIBS:=
-NSI_PATH:=/home/joeyw/zephyr-dev/zephyr/zephyr/scripts/native_simulator/
+NSI_PATH:=/home/joeyw/zephyr-dev/zephyr/scripts/native_simulator/
 NSI_N_CPUS:=1
 NSI_LOCALIZE_OPTIONS:=--localize-symbol=CONFIG_* 

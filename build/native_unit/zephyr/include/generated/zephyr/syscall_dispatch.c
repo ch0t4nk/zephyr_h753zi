@@ -387,10 +387,6 @@ uintptr_t z_mrsh_k_msgq_put(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
          uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
 
 __weak ALIAS_OF(handler_no_syscall)
-uintptr_t z_mrsh_k_msgq_put_front(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
-         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
-
-__weak ALIAS_OF(handler_no_syscall)
 uintptr_t z_mrsh_k_msgq_get(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
          uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
 
@@ -609,7 +605,6 @@ const _k_syscall_handler_t _k_syscall_table[K_SYSCALL_LIMIT] = {
 	[K_SYSCALL_K_SEM_COUNT_GET] = z_mrsh_k_sem_count_get,
 	[K_SYSCALL_K_MSGQ_ALLOC_INIT] = z_mrsh_k_msgq_alloc_init,
 	[K_SYSCALL_K_MSGQ_PUT] = z_mrsh_k_msgq_put,
-	[K_SYSCALL_K_MSGQ_PUT_FRONT] = z_mrsh_k_msgq_put_front,
 	[K_SYSCALL_K_MSGQ_GET] = z_mrsh_k_msgq_get,
 	[K_SYSCALL_K_MSGQ_PEEK] = z_mrsh_k_msgq_peek,
 	[K_SYSCALL_K_MSGQ_PEEK_AT] = z_mrsh_k_msgq_peek_at,

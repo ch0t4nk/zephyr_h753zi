@@ -1,2 +1,2 @@
 linker_script.pre.o: \
- /home/joeyw/zephyr-dev/zephyr/zephyr/scripts/native_simulator//common/other/linker_script.pre.ld
+ /home/joeyw/zephyr-dev/zephyr/scripts/native_simulator//common/other/linker_script.pre.ld

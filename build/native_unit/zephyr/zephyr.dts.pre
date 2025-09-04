@@ -1,7 +1,7 @@
-# 0 "/home/joeyw/zephyr-dev/zephyr/zephyr/misc/empty_file.c"
+# 0 "/home/joeyw/zephyr-dev/zephyr/misc/empty_file.c"
 # 0 "<built-in>"
 # 0 "<command-line>"
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim/native_sim.dts" 1
+# 1 "/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts" 1
 
 
 
@@ -9,60 +9,60 @@
 
 
 /dts-v1/;
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/posix/posix.dtsi" 1 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/dts/posix/posix.dtsi" 1 3 4
 
 
 
 
 
 
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/common/skeleton.dtsi" 1 3 4
-# 9 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/common/skeleton.dtsi" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/dts/common/skeleton.dtsi" 1 3 4
+# 9 "/home/joeyw/zephyr-dev/zephyr/dts/common/skeleton.dtsi" 3 4
 / {
  #address-cells = <1>;
  #size-cells = <1>;
  chosen { };
  aliases { };
 };
-# 8 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/posix/posix.dtsi" 2 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/common/mem.h" 1 3 4
-# 9 "/home/joeyw/zephyr-dev/zephyr/zephyr/dts/posix/posix.dtsi" 2 3 4
-# 9 "/home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim/native_sim.dts" 2
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/adc/adc.h" 1 3 4
-# 9 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/adc/adc.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/dt-util.h" 1 3 4
-# 19 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/dt-util.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_macro.h" 1 3 4
-# 34 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_macro.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 1 3 4
-# 18 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_loops.h" 1 3 4
-# 1083 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_loops.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_listify.h" 1 3 4
-# 1084 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_loops.h" 2 3 4
-# 19 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
-# 162 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal_is_eq.h" 1 3 4
-# 163 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
-# 193 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 3 4
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal_util_inc.h" 1 3 4
-# 194 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 8 "/home/joeyw/zephyr-dev/zephyr/dts/posix/posix.dtsi" 2 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/dts/common/mem.h" 1 3 4
+# 9 "/home/joeyw/zephyr-dev/zephyr/dts/posix/posix.dtsi" 2 3 4
+# 9 "/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts" 2
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/adc/adc.h" 1 3 4
+# 9 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/adc/adc.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/dt-util.h" 1 3 4
+# 19 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/dt-util.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_macro.h" 1 3 4
+# 34 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_macro.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 1 3 4
+# 18 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_loops.h" 1 3 4
+# 1083 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_loops.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_listify.h" 1 3 4
+# 1084 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_loops.h" 2 3 4
+# 19 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 162 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal_is_eq.h" 1 3 4
+# 163 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 193 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal_util_inc.h" 1 3 4
+# 194 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
 
 
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal_util_dec.h" 1 3 4
-# 197 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal_util_dec.h" 1 3 4
+# 197 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
 
 
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal_util_x2.h" 1 3 4
-# 200 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
-# 35 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/sys/util_macro.h" 2 3 4
-# 20 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/dt-util.h" 2 3 4
-# 10 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/adc/adc.h" 2 3 4
-# 10 "/home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim/native_sim.dts" 2
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/i2c/i2c.h" 1 3 4
-# 11 "/home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim/native_sim.dts" 2
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/include/zephyr/dt-bindings/gpio/gpio.h" 1 3 4
-# 12 "/home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim/native_sim.dts" 2
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal_util_x2.h" 1 3 4
+# 200 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_internal.h" 2 3 4
+# 35 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/sys/util_macro.h" 2 3 4
+# 20 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/dt-util.h" 2 3 4
+# 10 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/adc/adc.h" 2 3 4
+# 10 "/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts" 2
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/i2c/i2c.h" 1 3 4
+# 11 "/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts" 2
+# 1 "/home/joeyw/zephyr-dev/zephyr/include/zephyr/dt-bindings/gpio/gpio.h" 1 3 4
+# 12 "/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts" 2
 
 / {
  model = "Native Sim Board";
@@ -292,4 +292,4 @@
  };
 };
 # 0 "<command-line>" 2
-# 1 "/home/joeyw/zephyr-dev/zephyr/zephyr/misc/empty_file.c"
+# 1 "/home/joeyw/zephyr-dev/zephyr/misc/empty_file.c"

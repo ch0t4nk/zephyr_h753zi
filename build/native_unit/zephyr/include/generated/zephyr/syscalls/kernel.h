@@ -1189,24 +1189,6 @@ static inline int k_msgq_put(struct k_msgq * msgq, const void * data, k_timeout_
 }
 
 
-extern int z_impl_k_msgq_put_front(struct k_msgq * msgq, const void * data, k_timeout_t timeout);
-
-__pinned_func
-static inline int k_msgq_put_front(struct k_msgq * msgq, const void * data, k_timeout_t timeout)
-{
-#ifdef CONFIG_USERSPACE
-	if (z_syscall_trap()) {
-		union { uintptr_t x; struct k_msgq * val; } parm0 = { .val = msgq };
-		union { uintptr_t x; const void * val; } parm1 = { .val = data };
-		union { struct { uintptr_t lo, hi; } split; k_timeout_t val; } parm2 = { .val = timeout };
-		return (int) arch_syscall_invoke4(parm0.x, parm1.x, parm2.split.lo, parm2.split.hi, K_SYSCALL_K_MSGQ_PUT_FRONT);
-	}
-#endif
-	compiler_barrier();
-	return z_impl_k_msgq_put_front(msgq, data, timeout);
-}
-
-
 extern int z_impl_k_msgq_get(struct k_msgq * msgq, void * data, k_timeout_t timeout);
 
 __pinned_func

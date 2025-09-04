@@ -47,7 +47,6 @@ extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_msgq_peek;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_msgq_peek_at;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_msgq_purge;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_msgq_put;
-extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_msgq_put_front;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_mutex_init;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_mutex_lock;
 extern __weak ALIAS_OF(no_syscall_impl) void * const z_impl_k_mutex_unlock;

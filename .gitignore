@@ -1,0 +1,42 @@
+# Zephyr dev workspace ignores
+
+# Python virtual envs
+.venv/
+
+# West workspace metadata
+.west/
+
+# Build artifacts (top-level and nested)
+build/
+**/build/
+**/.ninja_* 
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/compile_commands.json
+**/CTestTestfile.cmake
+**/DartConfiguration.tcl
+**/Testing/
+
+# Binaries/objects/maps
+**/*.o
+**/*.obj
+**/*.a
+**/*.elf
+**/*.exe
+**/*.map
+**/*.stat
+
+# Python caches
+**/__pycache__/
+**/*.pyc
+
+# Zephyr modules cloned into workspace (managed by west, not this repo)
+modules/
+
+# External tools cloned by west
+/tools/edtt/
+/tools/net-tools/
+
+# Bootloader clones (managed externally)
+/bootloader/mcuboot/

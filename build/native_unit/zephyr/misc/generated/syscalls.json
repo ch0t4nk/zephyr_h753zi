@@ -761,14 +761,6 @@
     ],
     [
         [
-            "int k_msgq_put_front",
-            "struct k_msgq *msgq, const void *data, k_timeout_t timeout"
-        ],
-        "kernel.h",
-        true
-    ],
-    [
-        [
             "int k_msgq_get",
             "struct k_msgq *msgq, void *data, k_timeout_t timeout"
         ],
@@ -4193,14 +4185,6 @@
     ],
     [
         [
-            "int renesas_ra_ctsu_group_configure",
-            "const struct device *dev,\n\t\t\t\t\t      const struct renesas_ra_ctsu_touch_cfg *cfg"
-        ],
-        "input_renesas_ra_ctsu.h",
-        false
-    ],
-    [
-        [
             "void k_mem_paging_stats_get",
             "struct k_mem_paging_stats_t *stats"
         ],
@@ -4314,7 +4298,7 @@
     [
         [
             "bool net_if_ipv6_addr_add_by_index",
-            "int index,\n\t\t\t\t\t     const struct in6_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     uint32_t vlifetime"
+            "int index,\n\t\t\t\t\t     struct in6_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     uint32_t vlifetime"
         ],
         "net_if.h",
         false
@@ -4338,7 +4322,7 @@
     [
         [
             "bool net_if_ipv4_addr_add_by_index",
-            "int index,\n\t\t\t\t\t     const struct in_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     uint32_t vlifetime"
+            "int index,\n\t\t\t\t\t     struct in_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     uint32_t vlifetime"
         ],
         "net_if.h",
         false
@@ -4651,22 +4635,6 @@
         [
             "int rtio_submit",
             "struct rtio *r, uint32_t wait_count"
-        ],
-        "rtio.h",
-        false
-    ],
-    [
-        [
-            "struct rtio *rtio_pool_acquire",
-            "struct rtio_pool *pool"
-        ],
-        "rtio.h",
-        false
-    ],
-    [
-        [
-            "void rtio_pool_release",
-            "struct rtio_pool *pool, struct rtio *r"
         ],
         "rtio.h",
         false

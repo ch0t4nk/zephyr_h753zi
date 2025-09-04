@@ -17,12 +17,10 @@
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dsp
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_fs
-/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_gnss
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_input
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_internal
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_ipc
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_kernel
-/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_libsbc
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_linker
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_llext
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_logging
@@ -106,7 +104,6 @@
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_comparator
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_console
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_dac
-/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_disk
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_dma
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_edac
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_eeprom
@@ -122,7 +119,6 @@
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_interrupt_controller
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_led
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_led_strip
-/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_memc
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_mfd
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_mic_privacy
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_drivers_mipi_dsi
@@ -188,6 +184,7 @@
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_espi
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_ethernet
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_flash_controller
+/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_gnss
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_gpio
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_i2c
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_input
@@ -225,7 +222,6 @@
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_misc_renesas_ra-elc
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_pinctrl_renesas
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_dt-bindings_pinctrl_silabs
-/home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_gnss_rtk
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_kernel_internal
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_kernel_mm
 /home/joeyw/zephyr-dev/build/native_unit/zephyr/misc/generated/syscalls_links/include_zephyr_linker_common-rom

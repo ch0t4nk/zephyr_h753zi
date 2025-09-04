@@ -10,7 +10,7 @@ debug-runner: native
 
 # Common runner configuration values.
 config:
-  board_dir: /home/joeyw/zephyr-dev/zephyr/zephyr/boards/native/native_sim
+  board_dir: /home/joeyw/zephyr-dev/zephyr/boards/native/native_sim
   # Build outputs:
   elf_file: zephyr.elf
   exe_file: zephyr.exe
