@@ -217,6 +217,13 @@ static int cmd_stepper_model_set(const struct shell *shell, size_t argc, char **
     return r;
 }
 
+SHELL_STATIC_SUBCMD_SET_CREATE(models_cmds,
+    SHELL_CMD(list, NULL, "List available stepper models", cmd_stepper_models_list),
+    SHELL_CMD(show, NULL, "Show active model for axis: show <axis>", cmd_stepper_model_show),
+    SHELL_CMD(set, NULL, "Set active model: set <axis> <name>", cmd_stepper_model_set),
+    SHELL_SUBCMD_SET_END
+);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(stepper_cmds,
     SHELL_CMD(status, NULL, "Show L6470 statuses", cmd_stepper_status),
     SHELL_CMD(reset, NULL, "Hardware reset (placeholder)", cmd_stepper_reset),
@@ -226,12 +233,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(stepper_cmds,
     SHELL_CMD(disable, NULL, "Disable outputs: disable <dev> [hard]", cmd_stepper_disable),
     SHELL_CMD(limits, NULL, "Show configured L6470 safety limits", cmd_stepper_limits),
     SHELL_CMD(power, NULL, "Power control: power on|off|status", cmd_stepper_power),
-    SHELL_SUBCMD_SET_CREATE(models_cmds,
-        SHELL_CMD(list, NULL, "List available stepper models", cmd_stepper_models_list),
-        SHELL_CMD(show, NULL, "Show active model for axis: show <axis>", cmd_stepper_model_show),
-        SHELL_CMD(set, NULL, "Set active model: set <axis> <name>", cmd_stepper_model_set),
-        SHELL_SUBCMD_SET_END
-    ),
     SHELL_CMD(model, &models_cmds, "Stepper model commands (list/show/set)", NULL),
     SHELL_SUBCMD_SET_END
 );

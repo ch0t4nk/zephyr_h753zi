@@ -15,9 +15,6 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
-/* small helpers */
-#include <string.h>
-#include <errno.h>
 #endif
 
 #if defined(CONFIG_FLASH_MAP)
@@ -208,47 +205,6 @@ static int lfs_store_read(const char *path, void *data, size_t len, size_t *out_
     if (out_len) *out_len = (size_t)r;
     return 0;
 }
-
-/* Sentinel file to detect unexpected reformat of the LittleFS partition.
- * If the sentinel is missing we treat this as a freshly formatted FS and
- * write the sentinel. The caller may inspect `was_missing` to know whether
- * the sentinel had to be created.
- */
-#define LFS_SENTINEL_PATH "/lfs/.lfs_version"
-#define LFS_SENTINEL_VALUE "lfsv1"
-
-static int lfs_ensure_sentinel(bool *was_missing)
-{
-    char buf[32];
-    size_t out = 0;
-    int rc = lfs_store_read(LFS_SENTINEL_PATH, buf, sizeof(buf) - 1, &out);
-    if (rc == 0) {
-        /* ensure null termination */
-        if (out >= sizeof(buf)) out = sizeof(buf) - 1;
-        buf[out] = '\0';
-        if (strcmp(buf, LFS_SENTINEL_VALUE) == 0) {
-            if (was_missing) *was_missing = false;
-            return 0;
-        }
-        LOG_WRN("LittleFS sentinel mismatch: '%s' (rewriting)", buf);
-        rc = lfs_store_write(LFS_SENTINEL_PATH, LFS_SENTINEL_VALUE, strlen(LFS_SENTINEL_VALUE));
-        if (was_missing) *was_missing = false;
-        return rc;
-    } else if (rc == -ENOENT) {
-        /* sentinel missing - likely newly formatted */
-        if (was_missing) *was_missing = true;
-        rc = lfs_store_write(LFS_SENTINEL_PATH, LFS_SENTINEL_VALUE, strlen(LFS_SENTINEL_VALUE));
-        if (rc == 0) {
-            LOG_INF("LittleFS sentinel written");
-        } else {
-            LOG_ERR("LittleFS sentinel write failed: %d", rc);
-        }
-        return rc;
-    } else {
-        LOG_ERR("LittleFS sentinel read error: %d", rc);
-        return rc;
-    }
-}
 #endif /* CONFIG_FILE_SYSTEM_LITTLEFS */
 
 int main(void)
@@ -287,72 +243,139 @@ int main(void)
 
 /* Use the board's fixed partition named storage_partition */
 /* Try NVS first; fall back to LittleFS on targets with large erase pages */
-littlefs_fallback:
+#if defined(CONFIG_NVS)
+    static struct nvs_fs fs;
+    int rc;
+    struct flash_pages_info info;
 
-    /* LittleFS is now the only persistence backend */
-    int rc2 = lfs_mount_if_needed();
-    if (rc2 < 0) {
-        LOG_ERR("LittleFS mount failed: %d", rc2);
-        return 0;
+    fs.flash_device = FIXED_PARTITION_DEVICE(storage_partition);
+    if (!device_is_ready(fs.flash_device)) {
+        LOG_ERR("Flash device not ready");
+            return 0;
     }
-
-    /* Check or create sentinel so we can detect unexpected reformat */
-    bool sentinel_missing = false;
-    rc2 = lfs_ensure_sentinel(&sentinel_missing);
-    if (rc2 < 0) {
-        LOG_WRN("LittleFS sentinel check/write failed: %d", rc2);
-    } else if (sentinel_missing) {
-        LOG_INF("LittleFS sentinel was missing - filesystem likely newly formatted");
-    } else {
-        LOG_INF("LittleFS sentinel present and valid");
+    fs.offset = FIXED_PARTITION_OFFSET(storage_partition);
+    rc = flash_get_page_info_by_offs(fs.flash_device, fs.offset, &info);
+    if (rc) {
+        LOG_ERR("flash_get_page_info_by_offs failed: %d", rc);
+            return 0;
     }
-
-    const char *path = "/lfs/persist.bin";
-    uint8_t key = 0x42;
-    rc2 = lfs_store_write(path, &key, sizeof(key));
-    if (rc2 == 0) {
-        LOG_INF("LittleFS: wrote persist file");
-        uint8_t rv = 0;
-        size_t out = 0;
-        rc2 = lfs_store_read(path, &rv, sizeof(rv), &out);
-        if (rc2 == 0 && out == sizeof(rv)) {
-            LOG_INF("LittleFS read key val=0x%02x", rv);
-        } else {
-            LOG_ERR("LittleFS read failed: %d out=%zu", rc2, out);
-        }
-    } else {
-        LOG_ERR("LittleFS write failed: %d", rc2);
-    }
-
-    /* LED feedback: LD1 (led0) blinks if sentinel was missing (fresh FS),
-     * otherwise stays solid ON when sentinel present/valid.
+    /* NVS has a maximum supported sector size (65536). If the flash
+     * page/sector size is larger (some STM32H7 devices report 128KB pages),
+     * clamp the NVS sector size to the maximum and compute the sector
+     * count accordingly. Log a warning so the user knows we adjusted it.
      */
-#if DT_NODE_EXISTS(DT_ALIAS(led0)) && DT_NODE_HAS_PROP(DT_ALIAS(led0), gpios)
+    const size_t nvs_max_sector = 65536U;
+    if (info.size > (int)nvs_max_sector) {
+        LOG_WRN("flash page size %u larger than NVS max %u, clamping",
+                info.size, (unsigned)nvs_max_sector);
+        fs.sector_size = nvs_max_sector;
+    } else {
+        fs.sector_size = info.size;
+    }
+
+    /* Compute sector count; if partition size is not an exact multiple
+     * of the sector_size, truncate and warn. */
+    size_t part_size = FIXED_PARTITION_SIZE(storage_partition);
+    fs.sector_count = part_size / fs.sector_size;
+    if (fs.sector_count == 0) {
+        LOG_ERR("storage partition too small for configured NVS sector size");
+            return 0;
+    }
+    if ((part_size % fs.sector_size) != 0) {
+        LOG_WRN("storage partition size (%zu) not a multiple of sector_size (%u); trailing bytes ignored",
+                part_size, (unsigned)fs.sector_size);
+    }
+
+    rc = nvs_mount(&fs);
+    if (rc) {
+        LOG_ERR("nvs_mount failed: %d", rc);
+#if defined(CONFIG_FILE_SYSTEM_LITTLEFS)
+        /* EINVAL/-22 indicates invalid sector size; try LittleFS fallback */
+        if (rc == -22) {
+            LOG_INF("Falling back to LittleFS due to NVS invalid sector size");
+            goto littlefs_fallback;
+        }
+#endif
+            return 0;
+    }
+
+    uint8_t key = 0x42;
+    rc = nvs_write(&fs, 1, &key, sizeof(key));
+    if (rc < 0) {
+        LOG_ERR("nvs_write failed: %d", rc);
+    } else {
+        LOG_INF("Wrote key at id=1 len=%d", rc);
+    }
+
+    uint8_t readv;
+    rc = nvs_read(&fs, 1, &readv, sizeof(readv));
+    if (rc < 0) {
+        LOG_ERR("nvs_read failed: %d", rc);
+    } else {
+        LOG_INF("Read key id=1 val=0x%02x", readv);
+    }
+#if defined(CONFIG_FILE_SYSTEM_LITTLEFS)
+    return 0;
+        return 0;
+
+littlefs_fallback:
+    /* LittleFS fallback path */
     {
-        const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
-        if (device_is_ready(led0.port)) {
-            int rc = gpio_pin_configure_dt(&led0, GPIO_OUTPUT_INACTIVE);
-            if (rc) {
-                LOG_WRN("failed to configure LED0: %d", rc);
-            } else if (sentinel_missing) {
-                LOG_INF("LED0: blinking (sentinel missing)");
-                while (1) {
-                    gpio_pin_toggle_dt(&led0);
-                    k_sleep(K_MSEC(250));
+        int rc2;
+
+    /* LittleFS config/mount declared at file scope */
+
+        /* Try mounting and using LittleFS via the Zephyr FS API */
+#if defined(CONFIG_FILE_SYSTEM_LITTLEFS)
+        rc2 = lfs_mount_if_needed();
+        if (rc2 < 0) {
+            LOG_ERR("LittleFS mount failed: %d", rc2);
+        } else {
+            const char *path = "/lfs/persist.bin";
+            uint8_t key = 0x42;
+            rc2 = lfs_store_write(path, &key, sizeof(key));
+            if (rc2 == 0) {
+                LOG_INF("LittleFS: wrote persist file");
+                uint8_t rv = 0;
+                size_t out = 0;
+                rc2 = lfs_store_read(path, &rv, sizeof(rv), &out);
+                if (rc2 == 0 && out == sizeof(rv)) {
+                    LOG_INF("LittleFS read key val=0x%02x", rv);
+                        return 0;
+                } else {
+                    LOG_ERR("LittleFS read failed: %d out=%zu", rc2, out);
                 }
             } else {
-                LOG_INF("LED0: solid ON (sentinel OK)");
-                gpio_pin_set_dt(&led0, 1);
-                /* Keep thread alive so LED stays ON and button IRQ stays active */
-                while (1) {
-                    k_sleep(K_SECONDS(5));
-                }
+                LOG_ERR("LittleFS write failed: %d", rc2);
             }
-        } else {
-            LOG_WRN("LED0 device not ready");
         }
-    }
-#endif
+#endif /* CONFIG_FILE_SYSTEM_LITTLEFS */
 
-    return 0;
+        /* If we get here LittleFS was unavailable or failed; fall back to flash KV */
+#if defined(CONFIG_FLASH_MAP)
+        {
+            int rcf = kv_store_write(1, 0x42);
+            if (rcf == 0) {
+                LOG_INF("KV fallback: wrote key=1 val=0x42");
+                uint8_t rv = 0;
+                rcf = kv_store_read(1, &rv);
+                if (rcf == 0) {
+                    LOG_INF("KV fallback: read key=1 val=0x%02x", rv);
+                } else {
+                    LOG_ERR("KV fallback read failed: %d", rcf);
+                }
+            } else {
+                LOG_ERR("KV fallback write failed: %d", rcf);
+            }
+        }
+#else
+        LOG_WRN("No FLASH_MAP available to attempt raw flash fallback");
+#endif
+            return 0;
+    }
+#endif /* CONFIG_FILE_SYSTEM && CONFIG_LITTLEFS */
+#else
+    LOG_INF("CONFIG_NVS not enabled in this build; enable CONFIG_NVS to run the persistence smoke test");
+#endif
+        return 0;
 }

@@ -1,12 +1,4 @@
-/* Minimal L6470 helper for daisy-chain operations (supports 2 devices)
- *
- * Notes & References:
- *  - L6470 (dSPIN) datasheet: see sections "Serial interface" and
- *    "Digital interface" for command framing and maximum SCLK recommendations.
- *  - For hardware traceability, prefer exposing control pins (power switch,
- *    reset) via device-tree nodes so the binding is explicit in overlays.
- *    Example DT node name suggestions: "ihm02a1-reset", "ihm02a1-vmot-switch".
- */
+/* Minimal L6470 helper for daisy-chain operations (supports 2 devices) */
 #ifndef L6470_H_
 #define L6470_H_
 

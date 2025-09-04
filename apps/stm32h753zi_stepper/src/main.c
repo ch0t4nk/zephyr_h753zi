@@ -12,6 +12,7 @@
 #include <zephyr/drivers/spi.h>
 #include "l6470.h"
 #include <string.h>
+#include "persist.h"
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
@@ -20,22 +21,8 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 #define BUF_SIZE 128
 
 /* SPI frequency for L6470: choose a value supported by STM32H7 SPI and
- * within L6470 datasheet limits. The shield overlay sets a higher
- * nominal `spi-max-frequency` (20 MHz) to exercise controller limits, but
- * the application uses a conservative 5 MHz runtime configuration to
- * ensure reliable operation across voltage and cable conditions.
- *
- * References:
- *  - L6470 datasheet: maximum recommended SPI clock for reliable
- *    communications (check "Digital interface" section). Typical
- *    implementations use 5..10 MHz for stable operation.
- *  - STM32H7 reference manual / datasheet: SPI peripheral timings and
- *    supported max frequency depend on APB prescalers and core clocks.
- *
- * If you need higher throughput, validate with the shield schematic
- * and scope the MOSI/MISO lines at the target SPI speed. When raising the
- * speed, ensure the SPI controller's `spi-max-frequency` in the overlay
- * matches the runtime `.frequency` in `spi_config`.
+ * within L6470 datasheet limits. 5 MHz is safe and above the H7 minimum
+ * (1.875 MHz), providing good real-time control margin.
  */
 #define L6470_SPI_FREQ_HZ 5000000U
 
@@ -44,21 +31,29 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 /* IHM02A1 control pins (Arduino D2/D3/D4 mapped on this board):
- * Expose these through device-tree where possible and use gpio_dt_spec
- * helpers to avoid hard-coded controller lookups and pin numbers.
- *
- * Expected overlay nodes (examples):
- *   ihm02a1-flag  -> GPIOG pin 14
- *   ihm02a1-busy  -> GPIOE pin 13
- *   ihm02a1-reset -> GPIOE pin 14
+ *  - FLAG:  PG14, active low, input
+ *  - BUSY:  PE13, active high, input
+ *  - RESET: PE14, active low, output
  */
-#define IHM_FLAG_NODE  DT_NODELABEL(ihm02a1_flag)
-#define IHM_BUSY_NODE  DT_NODELABEL(ihm02a1_busy)
-#define IHM_RESET_NODE DT_NODELABEL(ihm02a1_reset)
+#if DT_NODE_EXISTS(DT_NODELABEL(gpiog))
+#define IHM_FLAG_PORT_NODE   DT_NODELABEL(gpiog)
+#define IHM_FLAG_PIN         14
+#else
+#define IHM_FLAG_PORT_NODE   DT_NODELABEL(gpio0)
+#define IHM_FLAG_PIN         0
+#endif
 
-static const struct gpio_dt_spec ihm_flag = GPIO_DT_SPEC_GET_OR(IHM_FLAG_NODE, gpios, { .port = NULL });
-static const struct gpio_dt_spec ihm_busy = GPIO_DT_SPEC_GET_OR(IHM_BUSY_NODE, gpios, { .port = NULL });
-static const struct gpio_dt_spec ihm_reset = GPIO_DT_SPEC_GET_OR(IHM_RESET_NODE, gpios, { .port = NULL });
+#if DT_NODE_EXISTS(DT_NODELABEL(gpioe))
+#define IHM_BUSY_PORT_NODE   DT_NODELABEL(gpioe)
+#define IHM_BUSY_PIN         13
+#define IHM_RESET_PORT_NODE  DT_NODELABEL(gpioe)
+#define IHM_RESET_PIN        14
+#else
+#define IHM_BUSY_PORT_NODE   DT_NODELABEL(gpio0)
+#define IHM_BUSY_PIN         1
+#define IHM_RESET_PORT_NODE  DT_NODELABEL(gpio0)
+#define IHM_RESET_PIN        2
+#endif
 
 void heartbeat_thread(void)
 {
@@ -206,7 +201,7 @@ static void wait_for_network(void)
     }
 }
 
-void main(void)
+int main(void)
 {
     int ret, server_fd, client_fd;
     struct sockaddr_in addr, client_addr;
@@ -219,29 +214,55 @@ void main(void)
     
     LOG_INF("Application startup complete");
 
-    /* Configure control pins via DT-backed gpio_dt_spec objects */
-    if (ihm_reset.port && device_is_ready(ihm_reset.port)) {
-        gpio_pin_configure_dt(&ihm_reset, GPIO_OUTPUT_ACTIVE);
+    /* Initialize persistence (LittleFS) */
+    int prc = persistence_init();
+    if (prc == 0) {
+        printk("persistence: initialized OK\n");
+        /* quick self-check */
+        const char *test_path = "/lfs/persist_test.txt";
+        const char test_data[] = "hello-persist";
+        size_t out_len = 0;
+        if (persistence_write_value(test_path, test_data, sizeof(test_data)) == 0) {
+            char buf[32];
+            if (persistence_read_value(test_path, buf, sizeof(buf), &out_len) == 0) {
+                printk("persistence: read %u bytes: %s\n", (unsigned)out_len, buf);
+            } else {
+                printk("persistence: read failed\n");
+            }
+        } else {
+            printk("persistence: write failed\n");
+        }
+    } else {
+        printk("persistence: init returned %d\n", prc);
+    }
+
+    /* Configure control pins: reset as output, busy/flag as inputs */
+    const struct device *gpio_g = NULL;
+    const struct device *gpio_e = NULL;
+#if DT_NODE_EXISTS(IHM_FLAG_PORT_NODE)
+    gpio_g = DEVICE_DT_GET(IHM_FLAG_PORT_NODE);
+#endif
+#if DT_NODE_EXISTS(IHM_BUSY_PORT_NODE)
+    gpio_e = DEVICE_DT_GET(IHM_BUSY_PORT_NODE);
+#endif
+    if (gpio_e && device_is_ready(gpio_e)) {
+        gpio_pin_configure(gpio_e, IHM_RESET_PIN, GPIO_OUTPUT_ACTIVE);
         /* Deassert reset after short delay (active low) */
         k_sleep(K_MSEC(5));
-        gpio_pin_set_dt(&ihm_reset, 1);
-    } else {
-        LOG_WRN("IHM RESET GPIO not present in DT or not ready");
+        gpio_pin_set(gpio_e, IHM_RESET_PIN, 1);
+        gpio_pin_configure(gpio_e, IHM_BUSY_PIN, GPIO_INPUT);
     }
-    if (ihm_busy.port && device_is_ready(ihm_busy.port)) {
-        gpio_pin_configure_dt(&ihm_busy, GPIO_INPUT);
-    } else {
-        LOG_WRN("IHM BUSY GPIO not present in DT or not ready");
-    }
-    if (ihm_flag.port && device_is_ready(ihm_flag.port)) {
-        gpio_pin_configure_dt(&ihm_flag, GPIO_INPUT);
-    } else {
-        LOG_WRN("IHM FLAG GPIO not present in DT or not ready");
+    if (gpio_g && device_is_ready(gpio_g)) {
+        gpio_pin_configure(gpio_g, IHM_FLAG_PIN, GPIO_INPUT);
     }
     
     /* Configure SPI for L6470 daisy-chain */
-    const struct device *spi_ctlr = DEVICE_DT_GET(DT_NODELABEL(spi1));
-    if (!device_is_ready(spi_ctlr)) {
+#if DT_NODE_EXISTS(DT_NODELABEL(spi1))
+    const struct device *spi_ctlr = NULL;
+#if DT_NODE_EXISTS(DT_NODELABEL(spi1))
+    spi_ctlr = DEVICE_DT_GET(DT_NODELABEL(spi1));
+#endif
+    if (!spi_ctlr || !device_is_ready(spi_ctlr)) {
         LOG_WRN("SPI controller not ready (spi1)");
     } else {
         struct spi_cs_control cs_ctrl = SPI_CS_CONTROL_INIT(DT_NODELABEL(spidev), 2);
@@ -255,7 +276,7 @@ void main(void)
             .cs = cs_ctrl,
         };
         /* Initialize L6470 helper for daisy-chain (2 devices) */
-        ret = l6470_init(spi_ctlr, &cfg);
+    ret = l6470_init(spi_ctlr, &cfg);
         if (ret == 0) {
             /* Issue a proper reset pulse (active-low) to both drivers */
             (void)l6470_reset_pulse();
@@ -272,6 +293,10 @@ void main(void)
             LOG_WRN("l6470_init failed: %d", ret);
         }
     }
+#else
+    LOG_WRN("spi1 node not present in DT for this board; skipping L6470 init");
+#endif
+/* removed stray brace */
 
     /* Status poll thread is defined at file scope */
 
@@ -285,7 +310,7 @@ void main(void)
     if (server_fd < 0) {
         printk("ERROR: Failed to create socket: %d\n", server_fd);
         LOG_ERR("Failed to create socket: %d", server_fd);
-        return;
+        return -1;
     }
     printk("Socket created successfully (fd: %d)\n", server_fd);
 
@@ -298,7 +323,7 @@ void main(void)
         printk("ERROR: Bind failed: %d\n", ret);
         LOG_ERR("Bind failed: %d", ret);
         zsock_close(server_fd);
-        return;
+        return -1;
     }
     printk("Socket bound to port %d\n", TCP_PORT);
 
@@ -307,7 +332,7 @@ void main(void)
         printk("ERROR: Listen failed: %d\n", ret);
         LOG_ERR("Listen failed: %d", ret);
         zsock_close(server_fd);
-        return;
+        return -1;
     }
     printk("Server listening for connections...\n");
     LOG_INF("TCP server ready - waiting for clients");
@@ -355,4 +380,5 @@ void main(void)
         zsock_close(client_fd);
     }
     zsock_close(server_fd);
+    return 0;
 }

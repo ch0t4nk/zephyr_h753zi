@@ -66,17 +66,6 @@
         status = "okay";
     };
 
-    /* Optional VMOT switch node: expose a GPIO used to enable/disable
-     * the motor supply (VMOT) on the expansion board. The reference
-     * X-NUCLEO-IHM02A1 does not provide a switched VMOT by default; add
-     * this node on boards that wire a FET or transistor to an Arduino
-     * header pin (e.g., PE11 -> Arduino D5).
-     */
-    ihm02a1_vmot_switch: ihm02a1-vmot-switch {
-        gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>; /* PE11 = Arduino D5 (active high) */
-        status = "okay";
-    };
-
     /* If you prefer, use the `ihm02a1-cs` node above to control a per-device
      * chip-select on D10 (PD14). The node above is active-low.
      */

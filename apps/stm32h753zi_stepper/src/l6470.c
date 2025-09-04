@@ -52,31 +52,8 @@ static const struct gpio_dt_spec reset_spec = GPIO_DT_SPEC_GET(IHM_RESET_NODE, g
 #else
 static const struct gpio_dt_spec reset_spec = { .port = NULL, .pin = 0, .dt_flags = 0 };
 #endif
-/* Motor power control pin:
- * - Physical pin: PE11, exposed on the Nucleo Arduino header as Arduino D5.
- * - Chosen here because the reference shield (X-NUCLEO-IHM02A1) does not
- *   include a switched VMOT controlled by an Arduino header. See the shield
- *   schematic for details (docs/x-nucleo-ihm02a1_schematic.pdf).
- *
- * Recommendation: If you prefer a device-tree controlled power switch, add a
- * small GPIO-controlled FET (high-side or low-side as appropriate) and expose
- * it as a DT node (e.g. "ihm02a1_vmot_switch"). That enables runtime control
- * via a DT-backed `gpio_dt_spec` instead of hard-coded port binding.
- */
 static const uint32_t pwr_pin = 11; /* PE11, Arduino D5 */
-/* Prefer a device-tree declared VMOT switch node. If present, use the
- * gpio_dt_spec which encodes controller, pin and flags. If absent, fall
- * back to the historical runtime binding to GPIOE pin 11 for backward
- * compatibility.
- */
-#define IHM_VMOT_NODE DT_NODELABEL(ihm02a1_vmot_switch)
-#if DT_NODE_EXISTS(IHM_VMOT_NODE)
-static const struct gpio_dt_spec vmot_spec = GPIO_DT_SPEC_GET(IHM_VMOT_NODE, gpios);
-#else
-static const struct gpio_dt_spec vmot_spec = { .port = NULL, .pin = 0, .dt_flags = 0 };
-#endif
-
-static const struct device *pwr_gpio = NULL; /* legacy fallback controller */
+static const struct device *pwr_gpio = NULL;
 static bool pwr_enabled = false;
 
 #if defined(CONFIG_ZTEST)
@@ -279,23 +256,6 @@ int l6470_reset_pulse(void)
 
 int l6470_power_enable(void)
 {
-    /* If a DT node exists, configure and use it. This documents the hardware
-     * mapping in overlays and removes the need for hard-coded controller
-     * names in the driver.
-     */
-    if (vmot_spec.port != NULL) {
-        if (!device_is_ready(vmot_spec.port)) {
-            LOG_ERR("VMOT spec GPIO not ready");
-            return -ENODEV;
-        }
-        gpio_pin_configure_dt(&vmot_spec, GPIO_OUTPUT_ACTIVE);
-        gpio_pin_set_dt(&vmot_spec, 1);
-        pwr_enabled = true;
-        LOG_INF("Motor power enabled via DT node (ihm02a1-vmot-switch)");
-        return 0;
-    }
-
-    /* Legacy fallback: bind to GPIOE:11 */
     if (!pwr_gpio) {
         pwr_gpio = device_get_binding("GPIOE");
         if (!pwr_gpio) {
@@ -310,25 +270,12 @@ int l6470_power_enable(void)
     gpio_pin_configure(pwr_gpio, pwr_pin, GPIO_OUTPUT_ACTIVE);
     gpio_pin_set(pwr_gpio, pwr_pin, 1);
     pwr_enabled = true;
-    LOG_INF("Motor power enabled (legacy binding: PE11 -> Arduino D5)");
+    LOG_INF("Motor power enabled");
     return 0;
 }
 
 int l6470_power_disable(void)
 {
-    /* Use DT-backed gpio if present */
-    if (vmot_spec.port != NULL) {
-        if (!device_is_ready(vmot_spec.port)) {
-            LOG_ERR("VMOT spec GPIO not ready");
-            return -ENODEV;
-        }
-        gpio_pin_set_dt(&vmot_spec, 0);
-        pwr_enabled = false;
-        LOG_INF("Motor power disabled via DT node (ihm02a1-vmot-switch)");
-        return 0;
-    }
-
-    /* Legacy fallback */
     if (!pwr_gpio) {
         pwr_gpio = device_get_binding("GPIOE");
         if (!pwr_gpio) {
@@ -342,7 +289,7 @@ int l6470_power_disable(void)
     }
     gpio_pin_set(pwr_gpio, pwr_pin, 0);
     pwr_enabled = false;
-    LOG_INF("Motor power disabled (legacy binding: PE11 -> Arduino D5)");
+    LOG_INF("Motor power disabled");
     return 0;
 }
 
