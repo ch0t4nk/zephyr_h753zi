@@ -18,7 +18,7 @@
 		{
 			"label": "Run Twister: native_sim unit tests",
 				"type": "shell",
-				"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -v",
+				"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -j 4 -o $HOME/zephyr-dev/twister-out -v && $HOME/zephyr-dev/zephyr/scripts/twister --report-summary -o $HOME/zephyr-dev/twister-out",
 				"group": "build",
 				"presentation": {
 					"reveal": "always",
