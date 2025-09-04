@@ -1,0 +1,4 @@
+[submodule "zephyr"]
+	path = zephyr
+	url = https://github.com/zephyrproject-rtos/zephyr
+	branch = v4.2-branch
