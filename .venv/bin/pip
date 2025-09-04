@@ -1,4 +1,4 @@
-#!/home/joeyw/zephyr-dev/.venv/bin/python3
+#!/home/joeyw/zephyr-dev/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

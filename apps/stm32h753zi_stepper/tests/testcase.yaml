@@ -1,0 +1,14 @@
+tests:
+  stm32h753zi_stepper.unit:
+    platform_allow:
+      - native_sim
+    build_only: false
+    tags:
+      - unit
+      - l6470
+    harness: ztest
+    integration_platforms:
+      - native_sim
+    extra_args:
+      # Point Twister at the unit test application directory
+      TESTDIR=apps/stm32h753zi_stepper/tests/unit

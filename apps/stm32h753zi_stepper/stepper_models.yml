@@ -6,6 +6,16 @@
   max_microstep: 16
   rated_voltage: 2.0   # V
   holding_torque: 0.4  # Nm
+  # L6470 init (conservative defaults; refine from datasheet/PDF)
+  use_microstep: 16
+  kval_run: 24
+  kval_acc: 24
+  kval_dec: 24
+  kval_hold: 12
+  ocd_thresh_ma: 1500
+  stall_thresh_ma: 800
+  acc_sps2: 1500      # steps/s^2 (conservative)
+  dec_sps2: 1500
 
 - name: NEMA23-HighTorque
   steps_per_rev: 200
@@ -14,3 +24,12 @@
   max_microstep: 128
   rated_voltage: 3.0
   holding_torque: 1.2
+  use_microstep: 16
+  kval_run: 32
+  kval_acc: 32
+  kval_dec: 32
+  kval_hold: 16
+  ocd_thresh_ma: 2000
+  stall_thresh_ma: 1200
+  acc_sps2: 2500
+  dec_sps2: 2500

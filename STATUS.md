@@ -7,53 +7,65 @@ Context Bootstrapping
 - STATUS.md is the primary context anchor for GitHub Copilot sessions; downstream orchestration depends on its integrity.
 
 ## Overview
-- Zephyr app: apps/stm32h753zi_stepper for Nucleo-H753ZI + X-NUCLEO-IHM02A1 (two L6470 drivers, daisy-chained SPI).
-- Dev workflow: native host tests (native_sim via ztest/Twister) + on-target build/flash (OpenOCD).
-- SSOT for stepper models: stepper_models.yml → scripts/gen_stepper_models.py → generated/stepper_models_autogen.h → src/stepper_models.c.
+- Zephyr app: `apps/stm32h753zi_stepper` for Nucleo‑H753ZI + X‑NUCLEO‑IHM02A1 (two L6470s, SPI daisy‑chain).
+- Workflow: native host tests (native_sim via ztest/Twister) + on‑target build/flash (OpenOCD).
+- Models SSOT: `stepper_models.yml` → `scripts/gen_stepper_models.py` → `build/generated/stepper_models_autogen.h` → `src/stepper_models.c`.
 
 ## Current status
-- native_sim: builds clean (prior warnings addressed). Twister installed and wired; ctest intentionally finds none (ztest-only suites).
-- nucleo_h753zi: board build passes.
-- Smoke shell: vmot on|off|toggle|status (DT-gated GPIO; prints -ENOTSUP if node missing).
+- Builds: native_sim app and nucleo_h753zi app both link successfully; unit build compiles (ctest intentionally finds none; Twister is the runner).
+- Status decode: on‑demand GET_STATUS works with human‑readable decode; periodic polling thread not yet enabled.
+- Parameter programming: model‑driven apply covers STEP_MODE, KVAL_* (hold/run/acc/dec), OCD_TH, ACC/DEC, MAX_SPEED, STALL_TH; applied on power‑on.
+- Positioning (fast wins): added goto/goto_dir/home/reset_pos, ABS_POS read, soft/hard stop, BUSY read/wait. Shell: `stepper goto|goto_dir|home|zero|pos|stop|busy|waitbusy`.
+- Persistence: LittleFS sentinel present; NVS backend planning for model selection durability.
+- Tests: ztest suites build on native_sim; new unit harness for parameter apply; more assertions planned.
 
-## Key changes
-- Persistence: LittleFS at /lfs with sentinel file /.mounted (src/persist.c). Formats storage on first mount failure when enabled (CONFIG_APP_LINK_WITH_FS=y and CONFIG_FILE_SYSTEM_MKFS=y).
-- Overlay: Shield wiring inlined in nucleo_h753zi.overlay (SPI1 and control GPIOs), avoiding separate shield DTS.
-- L6470: Reset GPIO fallback to PE14 when overlay node absent; test hooks for SPI/power.
-- Tests: Twister discovery enabled via apps/stm32h753zi_stepper/tests/unit/testcase.yaml; native_sim settings warning fixed with CONFIG_SETTINGS_NONE=y; weak-symbol guard removes strict mock address warning.
-- Tooling: VS Code task added to run Twister; settings/tasks JSON cleaned.
+## Key changes (recent)
+- Extended model schema (acc_sps2/dec_sps2) and generator; unit test build now generates the autogen header.
+- Expanded `l6470_apply_model_params()` to program ACC/DEC/MAX_SPEED/STALL_TH and existing STEP_MODE/KVAL/OCD_TH.
+- Added positioning and control APIs (goto/home/reset_pos/get_abs_pos/stop/busy) and wired shell commands.
+- Twister task guidance: prefer `$ZEPHYR_BASE/scripts/twister` or `twister` after sourcing `zephyr-env.sh` (avoid hard‑coded absolute paths).
 
 ## Decisions
-- Daisy-chain SPI and fixed 4-byte frames per device for deterministic packing.
-- Two-phase GET_STATUS (broadcast + NOP shift-out) to read both devices reliably.
-- Prefer Zephyr-native testing (Twister + ztest + native_sim) instead of external simulators unless ST-specific electrical modeling is required.
+- Fixed 4‑byte frames per device for simple, deterministic SPI packing across the daisy chain.
+- Two‑phase GET_STATUS (opcode broadcast then NOP clock‑out) for reliable per‑device status reads.
+- Stick with Zephyr Twister + native_sim for unit tests; avoid external simulators unless hardware‑specific modeling is required.
 
-## Tasks (short-term)
-- [ ] On-target smoke: flash and exercise vmot shell; confirm logs and GPIO behavior.
-- [ ] Persistence check on hardware: set model, reboot, verify restore (after finalizing NVS backend/partitioning).
-- [ ] Twister reports: enable XML/HTML artifacts for CI (optional).
+## Tasks (short‑term)
+- [ ] Populate `stepper_models.yml` with real datasheet values (current, accel/dec, speed, stall). Owner: Joey W. Target: 2025‑09‑06.
+- [ ] Add precise unit tests that assert encoded ACC/DEC/MAX_SPEED/STALL_TH bytes. Owner: Joey W. Target: 2025‑09‑07.
+- [ ] Add periodic status poll worker (e.g., 200 ms) gated by Kconfig, with a ring buffer (last 32 samples) and CLI toggle. Owner: Joey W. Target: 2025‑09‑09.
+- [ ] Add `stepper jog <dev> <±steps>` and `stepper waitpos <dev> <abs> [tol] [timeout_ms]`. Owner: Joey W. Target: 2025‑09‑09.
+- [ ] Ensure Twister task uses correct path; run Twister and publish artifacts. Owner: Joey W. Target: 2025‑09‑05.
+- [ ] On‑target smoke: power, status ‑v, goto/home, stop, pos. Owner: Joey W. Target: 2025‑09‑08.
+- [ ] Persistence on hardware: enable NVS settings backend and verify model restore after reboot. Owner: Joey W. Target: 2025‑09‑12.
 
 ## Milestones
-- M1 Bring-up: On-target VMOT smoke + GET_STATUS sanity; Target 2025-09-08; Owner Joey W.
-- M2 Persistence: NVS partitioning + verified model restore; Target 2025-09-12; Owner Joey W.
-- M3 Protocol: Expand strict SPI frame tests (RUN/MOVE/STOP); Target 2025-09-15; Owner Joey W.
+- M0 Positioning primitives: goto/home/reset_pos/pos/stop/busy wired; Status: COMPLETE (2025‑09‑04). Owner: Joey W.
+- M1 Bring‑up: On‑target VMOT/power + GET_STATUS sanity and shell smoke; Target: 2025‑09‑08. Owner: Joey W.
+- M2 Persistence: NVS partitioning + verified model restore; Target: 2025‑09‑12. Owner: Joey W.
+- M3 Protocol coverage: strict SPI frame tests (RUN/MOVE/STOP + SET_PARAM encodings); Target: 2025‑09‑15. Owner: Joey W.
 
 ## Blockers/Risks
-- Finalize on-target settings backend and partitioning; LittleFS path exists but NVS layout for H753ZI needs confirmation.
-- Hardware access windows may limit on-target testing cadence.
+- Datasheet transcription for real models takes time; keep conservative defaults until verified on hardware.
+- On‑target settings/NVS partitioning details for H753ZI need confirmation.
+- Occasional Twister path issues from absolute paths; standardize on `$ZEPHYR_BASE/scripts/twister`.
+- Hardware access windows may limit on‑target testing cadence.
 
 ## How to run (quick refs)
-- Build native unit: west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit -p always
-- Run tests: python zephyr/scripts/twister -T apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs
-- Board build/flash: west build -b nucleo_h753zi apps/stm32h753zi_stepper -d build/h753zi -p always && west flash --skip-rebuild --build-dir build/h753zi --runner openocd
+- Init env: `. zephyr/zephyr-env.sh` (sets ZEPHYR_BASE, etc.)
+- Unit build (native_sim): `west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit -p always`
+- Run tests (Twister): `twister -T apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs --outdir build/twister-out`
+- App build (native_sim): `west build -b native_sim apps/stm32h753zi_stepper -d build/native -p always`
+- App build/flash (H753ZI): `west build -b nucleo_h753zi apps/stm32h753zi_stepper -d build/h753zi -p always && west flash --skip-rebuild --build-dir build/h753zi --runner openocd`
 
 ## Pointers
-- App: apps/stm32h753zi_stepper/
-- Overlay: apps/stm32h753zi_stepper/nucleo_h753zi.overlay
-- Persistence: apps/stm32h753zi_stepper/src/persist.c
-- L6470: apps/stm32h753zi_stepper/src/l6470.*
-- Tests: apps/stm32h753zi_stepper/tests/unit/ and tests/unit/testcase.yaml
+- App: `apps/stm32h753zi_stepper/`
+- Overlay: `apps/stm32h753zi_stepper/nucleo_h753zi.overlay`
+- Persistence: `apps/stm32h753zi_stepper/src/persist.c`
+- L6470 driver: `apps/stm32h753zi_stepper/src/l6470.*`
+- Models: `apps/stm32h753zi_stepper/stepper_models.yml`, generator in `apps/stm32h753zi_stepper/scripts/`
+- Tests: `apps/stm32h753zi_stepper/tests/unit/` and `tests/unit/testcase.yaml`
 
 ---
 Change log
-- 2025-09-04: Added root STATUS.md anchor; cleaned warnings (SYS_INIT prototype, weak mock check), added Twister task; documented LittleFS sentinel and mkfs enablement.
+- 2025‑09‑04: Added positioning APIs and shell commands; expanded model‑driven parameter programming (ACC/DEC/MAX_SPEED/STALL_TH); unit/native/H753ZI builds green; Twister path guidance; normalized STATUS formatting and tasks.

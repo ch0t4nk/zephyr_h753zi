@@ -13,17 +13,19 @@
 				"reveal": "always",
 				"panel": "shared"
 			},
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Run Twister: native_sim unit tests",
-				"type": "shell",
-				"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -j 4 -o $HOME/zephyr-dev/twister-out -v && $HOME/zephyr-dev/zephyr/scripts/twister --report-summary -o $HOME/zephyr-dev/twister-out",
-				"group": "build",
-				"presentation": {
-					"reveal": "always",
-					"panel": "shared"
-				},
+			"type": "shell",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -j 4 -o $HOME/zephyr-dev/twister-out -v && $HOME/zephyr-dev/zephyr/scripts/twister --report-summary -o $HOME/zephyr-dev/twister-out",
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			},
 			"problemMatcher": []
 		},
 		{
@@ -31,14 +33,18 @@
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/h753zi -p always",
 			"group": "build",
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Zephyr: Incremental build",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/h753zi",
 			"group": "build",
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Zephyr: Flash stm32h753zi_stepper (OpenOCD)",
@@ -55,26 +61,41 @@
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_posix apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/native -p always",
 			"group": "build",
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Build native_sim l6470 tests",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/native -p always",
 			"group": "build",
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Build native_sim unit tests",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d $HOME/zephyr-dev/build/native_unit -p always",
 			"group": "build",
-			"problemMatcher": ["$gcc"]
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "Rebuild native_sim unit tests (with ctest)",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d $HOME/zephyr-dev/build/native_unit -p always && ctest --test-dir $HOME/zephyr-dev/build/native_unit -V",
+			"group": "build"
+		},
+		{
+			"label": "Run Twister unit tests (native_sim)",
+			"type": "shell",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && python3 $HOME/joeyw/zephyr-dev/zephyr/scripts/twister -T $HOME/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit --device-testing --device-serial /dev/null --platform native_sim --outdir $HOME/zephyr-dev/build/twister-out",
+			"problemMatcher": [
+				"$gcc"
+			],
 			"group": "build"
 		}
 	]
