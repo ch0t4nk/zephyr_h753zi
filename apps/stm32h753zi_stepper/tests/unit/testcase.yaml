@@ -1,0 +1,9 @@
+tests:
+  stm32h753zi_stepper.unit:
+    platform_allow:
+      - native_sim
+    build_only: false
+    tags:
+      - unit
+      - l6470
+    harness: ztest

@@ -17,10 +17,10 @@ static int fake_spi_xfer(const struct device *dev, const struct spi_config *cfg,
 }
 #endif
 
-/* If strict mock is linked in, forward-declare registration helper. It's
- * safe if it doesn't exist; tests can still run with the simple fake.
+/* If strict mock is linked in, forward-declare registration helper as weak.
+ * If it's not present, the pointer will be NULL and we'll fall back to the simple fake.
  */
-void strict_spi_mock_register(void);
+__attribute__((weak)) void strict_spi_mock_register(void);
 
 ZTEST_SUITE(stepper_models, NULL, NULL, NULL, NULL, NULL);
 
@@ -36,7 +36,7 @@ ZTEST(stepper_models, test_switch_and_enforce)
     l6470_set_power_enabled(true);
     l6470_test_force_ready();
     /* Prefer strict mock when available, else fall back to simple fake */
-    if ((void *)strict_spi_mock_register) {
+    if (strict_spi_mock_register) {
         strict_spi_mock_register();
     } else {
         l6470_set_spi_xfer(fake_spi_xfer);

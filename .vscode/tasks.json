@@ -16,6 +16,17 @@
 			"problemMatcher": ["$gcc"]
 		},
 		{
+			"label": "Run Twister: native_sim unit tests",
+				"type": "shell",
+				"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -v",
+				"group": "build",
+				"presentation": {
+					"reveal": "always",
+					"panel": "shared"
+				},
+			"problemMatcher": []
+		},
+		{
 			"label": "Zephyr: Build stm32h753zi_stepper",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west build -b nucleo_h753zi apps/stm32h753zi_stepper -d $HOME/zephyr-dev/build/h753zi -p always",

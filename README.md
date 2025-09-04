@@ -4,6 +4,20 @@ This repository contains the `stm32h753zi_stepper` Zephyr application (Nucleo-H7
 
 Important: Zephyr is tracked as a git submodule at `zephyr/`.
 
+## Current status
+
+- native_sim: builds with warnings only (unit tests pass via ctest)
+- nucleo_h753zi: build passes
+
+## Key changes
+
+- LittleFS persistence with sentinel in `apps/stm32h753zi_stepper/src/persist.c`
+	- Mounts fixed partition `storage` at `/lfs`
+	- Creates `/lfs/.mounted` sentinel; formats with `fs_mkfs()` on first use when enabled
+- Filesystem mkfs enabled via `CONFIG_APP_LINK_WITH_FS=y` and `CONFIG_FILE_SYSTEM_MKFS=y`
+- Shield wiring inlined in `apps/stm32h753zi_stepper/nucleo_h753zi.overlay` (no separate shield DTS needed)
+- Reset GPIO fallback in `apps/stm32h753zi_stepper/src/l6470.c` (uses PE14 on Nucleo-H753ZI if overlay node absent)
+
 Quick start
 1. Clone the repository with submodules:
 
@@ -46,6 +60,35 @@ Or source the absolute path to the script if you prefer:
 west build -b native_sim apps/stm32h753zi_stepper/tests/unit -d build/native_unit -p always
 ctest --test-dir build/native_unit -V
 ```
+
+Alternatively, in VS Code use Tasks:
+- Build native_sim unit tests
+- Rebuild native_sim unit tests (with ctest)
+
+## Flashing (Nucleo-H753ZI via OpenOCD)
+
+- VS Code task: "Zephyr: Flash stm32h753zi_stepper (OpenOCD)"
+- Or from the repository root after a board build:
+
+```bash
+west flash --skip-rebuild --build-dir build/h753zi --runner openocd
+```
+
+## Smoke CLI and logs
+
+- Zephyr shell provides a simple VMOT control under `vmot`:
+	- `vmot on | off | toggle | status`
+- Logging is enabled on UART and RTT; view via your serial terminal or RTT viewer.
+- VMOT control requires `ihm02a1_vmot_switch` node present in the overlay; otherwise commands print a helpful message and return `-ENOTSUP`.
+
+## Tests and Twister
+
+- Today: build native_sim tests and run with `ctest` (see above or VS Code tasks).
+- Next: wire ztest/Twister (add `testcase.yaml` under `apps/stm32h753zi_stepper/tests/` and a Twister invocation) so CI and local `twister` runs cover suites automatically.
+
+## Known warnings
+
+- On native_sim, enabling Settings or FS can emit warnings due to missing flash/partitions; these are harmless for host tests. On-target builds provide the required flash map and partition via overlay.
 
 Notes
 - The repository previously contained a vendored Zephyr tree; it was removed and preserved as a backup during migration (backup removed).

@@ -47,10 +47,17 @@ void l6470_test_force_ready(void)
  * harmless fallback when building for native_sim or when the overlay is
  * not applied.
  */
-#if DT_NODE_EXISTS(IHM_RESET_NODE)
+#if defined(CONFIG_BOARD_NUCLEO_H753ZI)
+/* Board-specific fallback: PE14 (Arduino D4) is wired to STBY/RESET */
+static const struct gpio_dt_spec reset_spec = (struct gpio_dt_spec){
+    .port = DEVICE_DT_GET(DT_NODELABEL(gpioe)),
+    .pin = 14,
+    .dt_flags = GPIO_ACTIVE_LOW,
+};
+#elif DT_NODE_HAS_PROP(IHM_RESET_NODE, gpios)
 static const struct gpio_dt_spec reset_spec = GPIO_DT_SPEC_GET(IHM_RESET_NODE, gpios);
 #else
-static const struct gpio_dt_spec reset_spec = { .port = NULL, .pin = 0, .dt_flags = 0 };
+static const struct gpio_dt_spec reset_spec = (struct gpio_dt_spec){ .port = NULL, .pin = 0, .dt_flags = 0 };
 #endif
 static const uint32_t pwr_pin = 11; /* PE11, Arduino D5 */
 static const struct device *pwr_gpio = NULL;
@@ -240,6 +247,10 @@ bool l6470_is_ready(void)
 
 int l6470_reset_pulse(void)
 {
+    if (reset_spec.port == NULL) {
+        LOG_WRN("RESET GPIO not defined in DT; skipping pulse");
+        return -ENODEV;
+    }
     if (!device_is_ready(reset_spec.port)) {
         LOG_ERR("RESET GPIO not ready");
         return -ENODEV;

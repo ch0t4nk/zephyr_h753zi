@@ -86,9 +86,8 @@ unsigned int stepper_get_model_count(void)
 }
 
 #ifdef CONFIG_SETTINGS
-static int stepper_settings_init(const struct device *dev)
+static int stepper_settings_init(void)
 {
-    ARG_UNUSED(dev);
     settings_subsys_init();
     settings_register(&stepper_settings);
     /* Attempt to load settings; ignore errors so defaults remain intact */
