@@ -62,14 +62,13 @@ Updated plan reflecting current progress. Completed items are marked, with CLI e
      - `stepper model set <axis> <name>` — set active model (persists if backend configured)
    - Recommendations: Extend schema with accel/current/microstep caps; add per-command step limit if desired; validate YAML in CI.
 
-6. Persist active model selection via Zephyr Settings (MED) — Done (backend implemented; on-target validation pending)
+6. Persist active model selection via Zephyr Settings (MED) — Done (validated on-target 2025-09-05)
    - What: Save `stepper/active` (two bytes: indices for axis0/axis1) using settings subsystem.
-   - Success: On platforms with settings backend, selection is restored on boot.
-   - Notes: Code is guarded by `CONFIG_SETTINGS`. Implemented using `CONFIG_SETTINGS_FILE` with LittleFS mounted at `/lfs` via `persist.c` (early mount + mkfs sentinel). Unit tests stub persistence when FS is not linked. On-target validation is pending until flashing is unblocked.
+   - Success: Selection is restored on boot; confirmed on-target. LittleFS mounts with "Mounted existing LittleFS" and settings survive reboot (validated by tools/flash_try.py log and `stepper model show 0`).
+   - Notes: Code is guarded by `CONFIG_SETTINGS`. Implemented using `CONFIG_SETTINGS_FILE` with LittleFS mounted at `/lfs` via `persist.c` (early mount + mkfs sentinel). Unit tests stub persistence when FS is not linked. On-target validation completed 2025-09-05; settings file present under `/lfs`.
    - Est: 2–4 hours.
     - Recommendations (nucleo_h753zi `prj.conf`):
        - Current: `CONFIG_SETTINGS_FILE=y` + LittleFS (FMP) at `/lfs`, with `CONFIG_FILE_SYSTEM_MKFS=y` and early mount in `persist.c`.
-       - Alternative: NVS backend (`CONFIG_SETTINGS_NVS=y`) if you prefer raw flash without FS; ensure an `nvs` storage partition exists in DTS/overlay.
        - On-target smoke after flashing:
           - `stepper model set 0 17HS3001-20B` then reboot; verify with `stepper model show 0` persists; check `/lfs/settings/run` exists.
 
@@ -82,7 +81,7 @@ Updated plan reflecting current progress. Completed items are marked, with CLI e
      - Run tests: `./build/native_unit/zephyr/zephyr.exe`
    - Recommendations: Strict frame tests added for RUN/MOVE packers; SPI strict mock validates buffer length and opcodes. Next: add fault-path tests for GET_STATUS parsing (e.g., refuse RUN/MOVE when OCD/STEP_LOSS set).
 
-8. Dual-control wiring alternative: per-device CS (OPTIONAL) — Deferred
+8. Dual-control wiring alternative: per-device CS (OPTIONAL) — CANCELLED - REMOVE
    - What: Separate CS per chip instead of daisy chain.
    - Status: Deferred; keeping default daisy-chain (single CS) for now.
    - Notes: All SPI transfers remain multi-device; overlay reflects shared CS.
@@ -127,9 +126,9 @@ Optional: tasks are available in VS Code for build/flash.
 ---
 
 ## Immediate recommended next steps
-Status: Flashing unblocked (OpenOCD with slower SWD succeeded; image programmed ~318 KiB).
+Status: Flashing unblocked (OpenOCD with slower SWD succeeded; image programmed ~318 KiB). Persistence validated on-target (2025-09-05).
 
-1) On-target persistence validation: with LittleFS + settings_file, verify `stepper model set` persists across reboots; confirm `/lfs` mount and settings load messages at boot.
+1) Hardware validation (with real motors): create a smoke checklist (power, `status -v`, `run/move`, stop, persistence re-check). Capture logs and any anomalies.
 2) Motion: add ACC/DEC shell wrappers and implement a simple trapezoidal planner; CLI: `stepper accel`, `stepper decel`, `stepper goto <deg>` (maps to steps via model).
 3) Tests: add a fault-path ztest that refuses RUN/MOVE when GET_STATUS indicates OCD/STEP_LOSS; extend strict mock if needed to validate full frame contents.
 
