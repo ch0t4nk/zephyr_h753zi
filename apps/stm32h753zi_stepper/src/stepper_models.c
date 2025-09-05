@@ -6,6 +6,14 @@
 #ifdef CONFIG_SETTINGS
 #include <zephyr/settings/settings.h>
 #endif
+#if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
+#include "persist.h"
+#else
+/* In unit tests or when FS is not linked, provide a no-op stub so we don't
+ * need to link the filesystem persistence module.
+ */
+static inline int persistence_init(void) { return 0; }
+#endif
 
 LOG_MODULE_DECLARE(l6470, LOG_LEVEL_INF);
 
@@ -88,6 +96,10 @@ unsigned int stepper_get_model_count(void)
 #ifdef CONFIG_SETTINGS
 static int stepper_settings_init(void)
 {
+    /* If using the file backend, ensure FS is mounted before settings init. */
+#if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
+    (void)persistence_init();
+#endif
     settings_subsys_init();
     settings_register(&stepper_settings);
     /* Attempt to load settings; ignore errors so defaults remain intact */

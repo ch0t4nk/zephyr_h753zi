@@ -20,7 +20,7 @@
 		{
 			"label": "Run Twister: native_sim unit tests",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $HOME/zephyr-dev/.venv/bin/python $HOME/zephyr-dev/zephyr/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -j 4 -o $HOME/zephyr-dev/twister-out -v && $HOME/zephyr-dev/zephyr/scripts/twister --report-summary -o $HOME/zephyr-dev/twister-out",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $ZEPHYR_BASE/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit -p native_sim --inline-logs -j 4 -o $HOME/zephyr-dev/twister-out -v",
 			"group": "build",
 			"presentation": {
 				"reveal": "always",
@@ -50,6 +50,26 @@
 			"label": "Zephyr: Flash stm32h753zi_stepper (OpenOCD)",
 			"type": "shell",
 			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir $HOME/zephyr-dev/build/h753zi --runner openocd",
+			"group": "none",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Zephyr: Flash stm32h753zi_stepper (ST-LINK)",
+			"type": "shell",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir $HOME/zephyr-dev/build/h753zi --runner stlink",
+			"group": "none",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Zephyr: Flash stm32h753zi_stepper (OpenOCD, slow SWD)",
+			"type": "shell",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && west flash --skip-rebuild --build-dir $HOME/zephyr-dev/build/h753zi -r openocd -- -c 'adapter speed 400'",
 			"group": "none",
 			"presentation": {
 				"reveal": "always",
@@ -92,7 +112,7 @@
 		{
 			"label": "Run Twister unit tests (native_sim)",
 			"type": "shell",
-			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && python3 $HOME/joeyw/zephyr-dev/zephyr/scripts/twister -T $HOME/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit --device-testing --device-serial /dev/null --platform native_sim --outdir $HOME/zephyr-dev/build/twister-out",
+			"command": ". $HOME/zephyr-dev/zephyr/zephyr-env.sh && $ZEPHYR_BASE/scripts/twister -T $HOME/zephyr-dev/apps/stm32h753zi_stepper/tests/unit --platform native_sim --inline-logs -j 4 --outdir $HOME/zephyr-dev/twister-out -v",
 			"problemMatcher": [
 				"$gcc"
 			],

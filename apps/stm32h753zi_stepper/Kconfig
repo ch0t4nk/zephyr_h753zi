@@ -1,0 +1,24 @@
+# Kconfig options for stm32h753zi_stepper application
+
+# Always include Zephyr's global Kconfig so standard symbols are available
+source "Kconfig.zephyr"
+
+menu "STM32H753ZI Stepper App"
+
+config STEPPER_STATUS_POLL
+    bool "Enable periodic L6470 status polling"
+    default n
+    help
+      When enabled, starts a background worker that polls GET_STATUS from
+      each L6470 device at a fixed interval and keeps a small ring buffer
+      of the last samples for diagnostics.
+
+config STEPPER_STATUS_POLL_PERIOD_MS
+    int "Status poll period (ms)"
+    depends on STEPPER_STATUS_POLL
+    range 50 5000
+    default 200
+    help
+      Period in milliseconds for the status polling worker.
+
+endmenu

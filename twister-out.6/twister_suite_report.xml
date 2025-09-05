@@ -1,0 +1,19 @@
+<testsuites>
+	<testsuite name="stm32h753zi_stepper.unit" time="0.01" timestamp="2025-09-04T20:24:37.914602" tests="10" failures="0" errors="0" skipped="0">
+		<properties>
+			<property name="version" value="v4.2.0-31-g663da2302b04" />
+			<property name="platform" value="native_sim/native" />
+			<property name="architecture" value="posix" />
+		</properties>
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_codec.build_get_status_tx_and_parse" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_codec.pack_move_frame_dev1" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_codec.pack_run_frame_dev0" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_limits.move_rejects_too_many_steps" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_limits.run_rejects_high_speed" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.stepper_models.persist_active" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.stepper_models.switch_and_enforce" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_strict.move_frame_bytes" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_strict.run_frame_bytes" time="0.00" />
+		<testcase classname="stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit.l6470_apply_model.program_core_params" time="0.00" />
+	</testsuite>
+</testsuites>

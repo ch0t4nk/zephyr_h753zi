@@ -1,7 +1,17 @@
 # CMakeLists.txt for stm32h753zi_stepper Zephyr application
 cmake_minimum_required(VERSION 3.20.0)
+
+# Add both device tree overlay files for the build
+set(DTC_OVERLAY_FILE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/nucleo_h753zi.overlay 
+    ${CMAKE_CURRENT_SOURCE_DIR}/fstab.overlay
+)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(stm32h753zi_stepper)
+
+zephyr_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+zephyr_link_libraries_ifdef(CONFIG_STEPPER_STATUS_POLL app)
 find_program(PYTHON3_EXECUTABLE python3)
 if(NOT PYTHON3_EXECUTABLE)
 	message(FATAL_ERROR "python3 not found")
@@ -26,5 +36,7 @@ target_sources(app PRIVATE
 		src/shell_stepper.c
 		src/persist.c
 		src/stepper_models.c
+		$<$<BOOL:${CONFIG_STEPPER_STATUS_POLL}>:${CMAKE_CURRENT_SOURCE_DIR}/src/status_poll.c>
 		${STEPPER_OUT}
 )
+

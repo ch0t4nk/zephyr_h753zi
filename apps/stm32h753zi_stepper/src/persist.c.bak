@@ -1,0 +1,227 @@
+#include "persi/* LittleFS mount description on the dedicated 'app-storage' partition.
+ * STM32H7 flash program unit is 256 bits (32 bytes). Provide 32-byte aligned
+ * buffers and 32-byte read/prog sizes to satisfy driver alignment.
+ * Override block_size to be much smaller than the 128KB erase block to make
+ * cache_size requirements manageable.
+ */
+FS_LITTLEFS_DECLARE_CUSTOM_CONFIG(app_storage, 32,
+								  32, /* read_size */
+								  32, /* prog_size */
+								  256, /* cache_size */
+								  32   /* lookahead_size (must be multiple of 8) */);
+
+static struct fs_mount_t lfs_mnt = {
+	.type = FS_LITTLEFS,
+	.fs_data = &app_storage,
+	/* Resolve storage_dev to the fixed partition id up-front */
+	.storage_dev = (void *)FIXED_PARTITION_ID(app_storage),
+	.mnt_point = PERSIST_MOUNT_POINT,
+};
+
+static bool s_mounted = false;
+
+/* Override block_size after declaration to force a smaller logical block size */
+static int override_block_size(void)
+{
+	/* Set block_size to 4096 bytes (4KB) which is much smaller than
+	 * STM32H7's 128KB erase block but manageable for cache_size requirements.
+	 * LittleFS can handle logical blocks smaller than physical erase blocks.
+	 */
+	app_storage.cfg.block_size = 4096;
+	return 0;
+}phyr/logging/log.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/fs/fs.h>
+#include <zephyr/fs/littlefs.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/drivers/flash.h>
+#include <string.h>
+
+LOG_MODULE_REGISTER(persist, LOG_LEVEL_INF);
+
+#define PERSIST_MOUNT_POINT "/lfs"
+#define PERSIST_SENTINEL     PERSIST_MOUNT_POINT "/.mounted"
+
+/* LittleFS mount description on the dedicated 'app-storage' partition.
+ * STM32H7 flash program unit is 256 bits (32 bytes). Provide 32-byte aligned
+ * buffers and 32-byte read/prog sizes to satisfy driver alignment.
+ */
+FS_LITTLEFS_DECLARE_CUSTOM_CONFIG(storage_config,
+	CONFIG_FS_LITTLEFS_READ_SIZE,
+	CONFIG_FS_LITTLEFS_PROG_SIZE,
+	1024,  /* Reasonable cache size for STM32H7 */
+	CONFIG_FS_LITTLEFS_LOOKAHEAD_SIZE);static struct fs_mount_t lfs_mnt = {
+	.type = FS_LITTLEFS,
+	.fs_data = &app_storage,
+	/* Set storage_dev to partition ID upfront to avoid fstab resolution issues */
+	.storage_dev = (void *)FIXED_PARTITION_ID(app_storage),
+	.mnt_point = PERSIST_MOUNT_POINT,
+};
+
+static bool s_mounted = false;
+
+static int ensure_sentinel(void)
+{
+	struct fs_dirent ent;
+	int rc = fs_stat(PERSIST_SENTINEL, &ent);
+	if (rc == 0 && ent.type == FS_DIR_ENTRY_FILE) {
+		return 0; /* already there */
+	}
+
+	/* Create a small sentinel file */
+	static const char msg[] = "ok\n";
+	struct fs_file_t f;
+	fs_file_t_init(&f);
+	rc = fs_open(&f, PERSIST_SENTINEL, FS_O_CREATE | FS_O_WRITE);
+	if (rc) {
+		LOG_WRN("sentinel open failed: %d", rc);
+		return rc;
+	}
+	ssize_t wr = fs_write(&f, msg, sizeof(msg));
+	fs_close(&f);
+	if (wr < 0) {
+		LOG_WRN("sentinel write failed: %d", (int)wr);
+		return (int)wr;
+	}
+	return 0;
+}
+
+int persistence_init(void)
+{
+	if (!s_mounted) {
+		/* Override block_size before mounting */
+		int orc = override_block_size();
+		if (orc < 0) {
+			LOG_ERR("Failed to override block_size: %d", orc);
+			return orc;
+		}
+
+		/* Log flash geometry and littlefs cfg for diagnostics */
+		const struct device *flash_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+		if (device_is_ready(flash_dev)) {
+		    const struct flash_parameters *params = flash_get_parameters(flash_dev);
+		    LOG_INF("flash: write_block=%u erase=%u bytes alignment=%u",
+			    (unsigned)params->write_block_size,
+			    (unsigned)flash_get_write_block_size(flash_dev),
+			    (unsigned)params->write_block_size);
+		}
+		LOG_INF("lfs cfg: read=%u prog=%u cache=%u lookahead=%u",
+			(unsigned)app_storage.cfg.read_size,
+			(unsigned)app_storage.cfg.prog_size,
+			(unsigned)app_storage.cfg.cache_size,
+			(unsigned)app_storage.cfg.lookahead_size);
+		/* Inspect the flash area to understand the actual erase block size */
+		const struct flash_area *fa = NULL;
+		int farc = flash_area_open((uintptr_t)lfs_mnt.storage_dev, &fa);
+		if (farc == 0 && fa) {
+			LOG_INF("flash area: off=0x%lx size=0x%lx",
+				(unsigned long)fa->fa_off, (unsigned long)fa->fa_size);
+			flash_area_close(fa);
+		}
+		int rc = fs_mount(&lfs_mnt);
+		if (rc != 0) {
+			LOG_WRN("fs_mount failed: %d, trying mkfs", rc);
+#if defined(CONFIG_APP_LINK_WITH_FS)
+			/* Proactively erase the entire partition to ensure a clean slate */
+			const struct flash_area *fa = NULL;
+			int orc = flash_area_open((uintptr_t)lfs_mnt.storage_dev, &fa);
+			if (orc == 0 && fa) {
+				LOG_INF("persist: erasing partition id=%lu off=0x%lx size=0x%lx",
+					   (unsigned long)(uintptr_t)lfs_mnt.storage_dev,
+					   (unsigned long)fa->fa_off,
+					   (unsigned long)fa->fa_size);
+				int erc = flash_area_erase(fa, 0, fa->fa_size);
+				if (erc != 0) {
+					LOG_WRN("flash_area_erase failed: %d", erc);
+				}
+				flash_area_close(fa);
+			} else {
+				LOG_WRN("flash_area_open failed: %d", orc);
+			}
+
+			/* Format the partition and retry mount */
+			int frc = fs_mkfs(FS_LITTLEFS,
+							  (uintptr_t)lfs_mnt.storage_dev,
+							  &app_storage,
+							  0);
+			if (frc != 0) {
+				LOG_ERR("mkfs failed: %d (dev id=%lu)", frc, (unsigned long)(uintptr_t)lfs_mnt.storage_dev);
+				return frc;
+			}
+			LOG_INF("mkfs succeeded, attempting remount");
+			rc = fs_mount(&lfs_mnt);
+			if (rc != 0) {
+				LOG_ERR("fs_mount after mkfs failed: %d (dev id=%lu)", rc, (unsigned long)(uintptr_t)lfs_mnt.storage_dev);
+				LOG_ERR("STM32H7 erase blocks are 128KB, cache_size has been set to match");
+				return rc;
+			}
+#else
+			return rc;
+#endif
+		}
+		s_mounted = true;
+	}
+	/* Create sentinel file if missing */
+	return ensure_sentinel();
+}
+
+int persistence_write_value(const char *path, const void *data, size_t len)
+{
+	if (!path || !data) {
+		return -EINVAL;
+	}
+	if (!s_mounted) {
+		int rc = persistence_init();
+		if (rc) return rc;
+	}
+
+	struct fs_file_t f;
+	fs_file_t_init(&f);
+	int rc = fs_open(&f, path, FS_O_CREATE | FS_O_WRITE | FS_O_TRUNC);
+	if (rc) {
+		return rc;
+	}
+	ssize_t wr = fs_write(&f, data, len);
+	int saved = (wr < 0) ? (int)wr : 0;
+	fs_close(&f);
+	return saved;
+}
+
+int persistence_read_value(const char *path, void *data, size_t len, size_t *out_len)
+{
+	if (!path || !data) {
+		return -EINVAL;
+	}
+	if (!s_mounted) {
+		int rc = persistence_init();
+		if (rc) return rc;
+	}
+
+	struct fs_file_t f;
+	fs_file_t_init(&f);
+	int rc = fs_open(&f, path, FS_O_READ);
+	if (rc) {
+		return rc;
+	}
+	ssize_t rd = fs_read(&f, data, len);
+	fs_close(&f);
+	if (rd < 0) {
+		return (int)rd;
+	}
+	if (out_len) {
+		*out_len = (size_t)rd;
+	}
+	return 0;
+}
+
+void persistence_status_print(void)
+{
+	printk("persist: mount=%s dev=0x%lx mnt=%s cfg[r=%u p=%u c=%u l=%u]\n",
+		   s_mounted ? "yes" : "no",
+		   (unsigned long)(uintptr_t)lfs_mnt.storage_dev,
+		   lfs_mnt.mnt_point,
+		   (unsigned)app_storage.cfg.read_size,
+		   (unsigned)app_storage.cfg.prog_size,
+		   (unsigned)app_storage.cfg.cache_size,
+		   (unsigned)app_storage.cfg.lookahead_size);
+}

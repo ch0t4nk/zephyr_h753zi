@@ -83,7 +83,12 @@ void l6470_set_power_enabled(bool en)
 /* --- Minimal register write helpers (conservative, single-byte fields) --- */
 static int l6470_write_reg_1b(uint8_t dev, uint8_t opcode, uint8_t val)
 {
+    /* In tests, allow using the injected SPI xfer even without a real SPI device */
+#if defined(CONFIG_ZTEST)
+    if (!g_spi && !g_test_xfer) return -ENODEV;
+#else
     if (!g_spi) return -ENODEV;
+#endif
     uint8_t tx[L6470_FRAME_SIZE * L6470_DAISY_SIZE];
     uint8_t rx[sizeof(tx)];
     memset(tx, L6470_NOP, sizeof(tx));
@@ -97,13 +102,24 @@ static int l6470_write_reg_1b(uint8_t dev, uint8_t opcode, uint8_t val)
     struct spi_buf_set tx_set = { .buffers = &txb, .count = 1 };
     struct spi_buf rxb = { .buf = rx, .len = sizeof(rx) };
     struct spi_buf_set rx_set = { .buffers = &rxb, .count = 1 };
-    int ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+    int ret;
+#if defined(CONFIG_ZTEST)
+    if (g_test_xfer) ret = g_test_xfer(g_spi, &g_cfg, &tx_set, &rx_set);
+    else ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#else
+    ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#endif
     return ret;
 }
 
 static int l6470_write_reg_2b(uint8_t dev, uint8_t opcode, uint16_t val)
 {
+    /* In tests, allow using the injected SPI xfer even without a real SPI device */
+#if defined(CONFIG_ZTEST)
+    if (!g_spi && !g_test_xfer) return -ENODEV;
+#else
     if (!g_spi) return -ENODEV;
+#endif
     uint8_t tx[L6470_FRAME_SIZE * L6470_DAISY_SIZE];
     uint8_t rx[sizeof(tx)];
     memset(tx, L6470_NOP, sizeof(tx));
@@ -117,13 +133,24 @@ static int l6470_write_reg_2b(uint8_t dev, uint8_t opcode, uint16_t val)
     struct spi_buf_set tx_set = { .buffers = &txb, .count = 1 };
     struct spi_buf rxb = { .buf = rx, .len = sizeof(rx) };
     struct spi_buf_set rx_set = { .buffers = &rxb, .count = 1 };
-    int ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+    int ret;
+#if defined(CONFIG_ZTEST)
+    if (g_test_xfer) ret = g_test_xfer(g_spi, &g_cfg, &tx_set, &rx_set);
+    else ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#else
+    ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#endif
     return ret;
 }
 
 static int l6470_write_reg_3b(uint8_t dev, uint8_t opcode, uint32_t val)
 {
+    /* In tests, allow using the injected SPI xfer even without a real SPI device */
+#if defined(CONFIG_ZTEST)
+    if (!g_spi && !g_test_xfer) return -ENODEV;
+#else
     if (!g_spi) return -ENODEV;
+#endif
     uint8_t tx[L6470_FRAME_SIZE * L6470_DAISY_SIZE];
     uint8_t rx[sizeof(tx)];
     memset(tx, L6470_NOP, sizeof(tx));
@@ -137,7 +164,13 @@ static int l6470_write_reg_3b(uint8_t dev, uint8_t opcode, uint32_t val)
     struct spi_buf_set tx_set = { .buffers = &txb, .count = 1 };
     struct spi_buf rxb = { .buf = rx, .len = sizeof(rx) };
     struct spi_buf_set rx_set = { .buffers = &rxb, .count = 1 };
-    int ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+    int ret;
+#if defined(CONFIG_ZTEST)
+    if (g_test_xfer) ret = g_test_xfer(g_spi, &g_cfg, &tx_set, &rx_set);
+    else ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#else
+    ret = spi_transceive(g_spi, &g_cfg, &tx_set, &rx_set);
+#endif
     return ret;
 }
 
@@ -219,7 +252,12 @@ static uint8_t l6470_encode_stall_th_ma(uint32_t ma)
 int l6470_apply_model_params(uint8_t dev, const stepper_model_t *m)
 {
     if (!m) return -EINVAL;
+    /* In tests, proceed if a test xfer is installed even without real SPI */
+#if defined(CONFIG_ZTEST)
+    if (!g_spi && !g_test_xfer) return -ENODEV;
+#else
     if (!g_spi) return -ENODEV;
+#endif
     /* STEP_MODE (bits 3:0 for microstep). Clamp to device max 128 (encoded). */
     int micro =
 #ifdef STEPPER_MODEL_EXTENDED

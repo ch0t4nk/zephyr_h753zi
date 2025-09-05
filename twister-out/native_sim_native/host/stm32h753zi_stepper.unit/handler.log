@@ -1,5 +1,23 @@
 *** Booting Zephyr OS build v4.2.0-31-g663da2302b04 ***
+Running TESTSUITE l6470_apply_model
+===================================================================
+START - test_min_acc_dec_and_low_max_speed
+ PASS - test_min_acc_dec_and_low_max_speed in 0.000 seconds
+===================================================================
+START - test_program_core_params
+ PASS - test_program_core_params in 0.000 seconds
+===================================================================
+START - test_stall_threshold_min_clamp
+ PASS - test_stall_threshold_min_clamp in 0.000 seconds
+===================================================================
+TESTSUITE l6470_apply_model succeeded
 Running TESTSUITE l6470_codec
+===================================================================
+START - test_boundary_max_speed_mask
+ PASS - test_boundary_max_speed_mask in 0.000 seconds
+===================================================================
+START - test_boundary_move_steps_mask
+ PASS - test_boundary_move_steps_mask in 0.000 seconds
 ===================================================================
 START - test_build_get_status_tx_and_parse
  PASS - test_build_get_status_tx_and_parse in 0.000 seconds
@@ -14,11 +32,11 @@ TESTSUITE l6470_codec succeeded
 Running TESTSUITE l6470_limits
 ===================================================================
 START - test_move_rejects_too_many_steps
-[00:00:00.000,000] <wrn> l6470: Attempt to move while power disabled
+[00:00:00.000,000] <err> l6470: Requested steps 8388608 exceeds configured max 8388607
  PASS - test_move_rejects_too_many_steps in 0.000 seconds
 ===================================================================
 START - test_run_rejects_high_speed
-[00:00:00.000,000] <wrn> l6470: Attempt to run while power disabled
+[00:00:00.000,000] <err> l6470: Requested speed 1300 exceeds model max 1200
  PASS - test_run_rejects_high_speed in 0.000 seconds
 ===================================================================
 TESTSUITE l6470_limits succeeded
@@ -53,7 +71,14 @@ TESTSUITE stepper_models succeeded
 
 ------ TESTSUITE SUMMARY START ------
 
-SUITE PASS - 100.00% [l6470_codec]: pass = 3, fail = 0, skip = 0, total = 3 duration = 0.000 seconds
+SUITE PASS - 100.00% [l6470_apply_model]: pass = 3, fail = 0, skip = 0, total = 3 duration = 0.000 seconds
+ - PASS - [l6470_apply_model.test_min_acc_dec_and_low_max_speed] duration = 0.000 seconds
+ - PASS - [l6470_apply_model.test_program_core_params] duration = 0.000 seconds
+ - PASS - [l6470_apply_model.test_stall_threshold_min_clamp] duration = 0.000 seconds
+
+SUITE PASS - 100.00% [l6470_codec]: pass = 5, fail = 0, skip = 0, total = 5 duration = 0.000 seconds
+ - PASS - [l6470_codec.test_boundary_max_speed_mask] duration = 0.000 seconds
+ - PASS - [l6470_codec.test_boundary_move_steps_mask] duration = 0.000 seconds
  - PASS - [l6470_codec.test_build_get_status_tx_and_parse] duration = 0.000 seconds
  - PASS - [l6470_codec.test_pack_move_frame_dev1] duration = 0.000 seconds
  - PASS - [l6470_codec.test_pack_run_frame_dev0] duration = 0.000 seconds
@@ -73,5 +98,5 @@ SUITE PASS - 100.00% [stepper_models]: pass = 2, fail = 0, skip = 0, total = 2 d
 ------ TESTSUITE SUMMARY END ------
 
 ===================================================================
-RunID: 046bb2c03e619716741dce7c1aa67b8c
+RunID: 8249aaf073b7292722ebc0d8f068fa95
 PROJECT EXECUTION SUCCESSFUL

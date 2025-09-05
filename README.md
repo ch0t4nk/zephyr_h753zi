@@ -74,6 +74,20 @@ Alternatively, in VS Code use Tasks:
 west flash --skip-rebuild --build-dir build/h753zi --runner openocd
 ```
 
+Tips:
+- If OpenOCD fails to connect on this board, try an alternative runner:
+
+```bash
+west flash --skip-rebuild --build-dir build/h753zi --runner stlink
+```
+
+- You can also lower the SWD speed for OpenOCD by adding `-c 'adapter speed 400'` via west runner args (see `west flash -h`).
+ - You can also lower the SWD speed for OpenOCD by passing extra args after `--`:
+
+```bash
+west flash --skip-rebuild --build-dir build/h753zi -r openocd -- -c 'adapter speed 400'
+```
+
 ## Smoke CLI and logs
 
 - Zephyr shell provides a simple VMOT control under `vmot`:
@@ -83,8 +97,21 @@ west flash --skip-rebuild --build-dir build/h753zi --runner openocd
 
 ## Tests and Twister
 
-- Today: build native_sim tests and run with `ctest` (see above or VS Code tasks).
-- Next: wire ztest/Twister (add `testcase.yaml` under `apps/stm32h753zi_stepper/tests/` and a Twister invocation) so CI and local `twister` runs cover suites automatically.
+- You can still build native_sim tests and run with `ctest` (see above or VS Code tasks).
+- Prefer running Twister via west (don’t call the script directly):
+
+```bash
+west twister -T apps/stm32h753zi_stepper/tests/unit \
+	-p native_sim --inline-logs -j 4 -o twister-out -v
+```
+
+Notes:
+- Some Twister versions have a flaky `--report-summary` step; if it crashes with a KeyError, just omit it and use the generated reports under `twister-out/`.
+- To rerun a single suite quickly:
+
+```bash
+west twister -p native_sim -s stm32h753zi_stepper.unit -o twister-out -v
+```
 
 ## Known warnings
 

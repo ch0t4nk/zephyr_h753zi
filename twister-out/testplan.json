@@ -4,14 +4,14 @@
         "zephyr_version":"v4.2.0-31-g663da2302b04",
         "toolchain":"zephyr",
         "commit_date":"2025-09-02T22:15:47-07:00",
-        "run_date":"2025-09-04T21:13:21+00:00",
+        "run_date":"2025-09-05T15:14:15+00:00",
         "options":{
             "testsuite_root":[
-                "apps/stm32h753zi_stepper/tests/unit"
+                "/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit"
             ],
             "inline_logs":true,
             "jobs":4,
-            "report_dir":"twister-out",
+            "report_dir":"/home/joeyw/zephyr-dev/twister-out",
             "platform":[
                 "native_sim"
             ],
@@ -24,7 +24,7 @@
             "arch":"posix",
             "platform":"native_sim/native",
             "path":"../apps/stm32h753zi_stepper/tests/unit",
-            "run_id":"046bb2c03e619716741dce7c1aa67b8c",
+            "run_id":"8249aaf073b7292722ebc0d8f068fa95",
             "runnable":true,
             "retries":0,
             "toolchain":"host",
@@ -33,11 +33,11 @@
             "build_time":"0.00",
             "testcases":[
                 {
-                    "identifier":"stm32h753zi_stepper.unit.l6470_limits.run_rejects_high_speed",
+                    "identifier":"stm32h753zi_stepper.unit.l6470_apply_model.stall_threshold_min_clamp",
                     "status":"None"
                 },
                 {
-                    "identifier":"stm32h753zi_stepper.unit.l6470_limits.move_rejects_too_many_steps",
+                    "identifier":"stm32h753zi_stepper.unit.stepper_models.persist_active",
                     "status":"None"
                 },
                 {
@@ -45,7 +45,11 @@
                     "status":"None"
                 },
                 {
-                    "identifier":"stm32h753zi_stepper.unit.power_control_tests.power_state_hooks",
+                    "identifier":"stm32h753zi_stepper.unit.l6470_strict.run_frame_bytes",
+                    "status":"None"
+                },
+                {
+                    "identifier":"stm32h753zi_stepper.unit.l6470_codec.boundary_move_steps_mask",
                     "status":"None"
                 },
                 {
@@ -53,7 +57,23 @@
                     "status":"None"
                 },
                 {
+                    "identifier":"stm32h753zi_stepper.unit.l6470_apply_model.min_acc_dec_and_low_max_speed",
+                    "status":"None"
+                },
+                {
+                    "identifier":"stm32h753zi_stepper.unit.l6470_apply_model.program_core_params",
+                    "status":"None"
+                },
+                {
+                    "identifier":"stm32h753zi_stepper.unit.l6470_limits.run_rejects_high_speed",
+                    "status":"None"
+                },
+                {
                     "identifier":"stm32h753zi_stepper.unit.l6470_codec.pack_run_frame_dev0",
+                    "status":"None"
+                },
+                {
+                    "identifier":"stm32h753zi_stepper.unit.l6470_codec.boundary_max_speed_mask",
                     "status":"None"
                 },
                 {
@@ -61,15 +81,15 @@
                     "status":"None"
                 },
                 {
+                    "identifier":"stm32h753zi_stepper.unit.power_control_tests.power_state_hooks",
+                    "status":"None"
+                },
+                {
                     "identifier":"stm32h753zi_stepper.unit.l6470_codec.pack_move_frame_dev1",
                     "status":"None"
                 },
                 {
-                    "identifier":"stm32h753zi_stepper.unit.l6470_strict.run_frame_bytes",
-                    "status":"None"
-                },
-                {
-                    "identifier":"stm32h753zi_stepper.unit.stepper_models.persist_active",
+                    "identifier":"stm32h753zi_stepper.unit.l6470_limits.move_rejects_too_many_steps",
                     "status":"None"
                 }
             ]

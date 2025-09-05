@@ -1,0 +1,260 @@
+[2025-09-05 13:34:07] Flash+Try starting
+[2025-09-05 13:34:07] RUN: west flash --skip-rebuild --build-dir /home/joeyw/zephyr-dev/build/h753zi -r openocd -- -c adapter speed 400
+[2025-09-05 13:34:08] OUT: -- west flash: using runner openocd 
+[2025-09-05 13:34:08] OUT: -- runners.openocd: Flashing file: /home/joeyw/zephyr-dev/build/h753zi/zephyr/zephyr.hex 
+[2025-09-05 13:34:08] OUT: Open On-Chip Debugger 0.12.0-01018-gb89d626c6 (2025-06-23-11:53) 
+[2025-09-05 13:34:08] OUT: Licensed under GNU GPL v2 
+[2025-09-05 13:34:08] OUT: For bug reports, read 
+[2025-09-05 13:34:08] OUT: 	http://openocd.org/doc/doxygen/bugs.html 
+[2025-09-05 13:34:08] OUT: Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD 
+[2025-09-05 13:34:08] OUT: init 
+[2025-09-05 13:34:08] OUT: Info : clock speed 1800 kHz 
+[2025-09-05 13:34:08] OUT: Info : STLINK V3J16M8 (API v3) VID:PID 0483:374E 
+[2025-09-05 13:34:08] OUT: Info : Target voltage: 3.270120 
+[2025-09-05 13:34:08] OUT: Info : [stm32h7x.cpu0] Cortex-M7 r1p1 processor detected 
+[2025-09-05 13:34:08] OUT: Info : [stm32h7x.cpu0] target has 8 breakpoints, 4 watchpoints 
+[2025-09-05 13:34:08] OUT: Error: read_memory: read at 0x5c001004 with width=32 and count=1 failed 
+[2025-09-05 13:34:08] OUT: Error executing event examine-end on target stm32h7x.cpu0: 
+[2025-09-05 13:34:08] OUT: /home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg:237: Error: read_memory: failed to read memory 
+[2025-09-05 13:34:08] OUT: in procedure 'init' 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_dbgmcu_mmw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 170 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_mmw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 260 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_mrw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 242 
+[2025-09-05 13:34:08] OUT: at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 237 
+[2025-09-05 13:34:08] OUT: Info : starting gdb server for stm32h7x.cpu0 on 3333 
+[2025-09-05 13:34:08] OUT: Info : Listening on port 3333 for gdb connections 
+[2025-09-05 13:34:08] OUT: Error: read_memory: read at 0x5c001004 with width=32 and count=1 failed 
+[2025-09-05 13:34:08] OUT: Error executing event examine-end on target stm32h7x.cpu0: 
+[2025-09-05 13:34:08] OUT: /home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg:237: Error: read_memory: failed to read memory 
+[2025-09-05 13:34:08] OUT: in procedure 'init' 
+[2025-09-05 13:34:08] OUT: in procedure 'ocd_process_reset' 
+[2025-09-05 13:34:08] OUT: in procedure 'ocd_process_reset_inner' called at file "embedded:startup.tcl", line 1193 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_dbgmcu_mmw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 170 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_mmw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 260 
+[2025-09-05 13:34:08] OUT: in procedure 'stm32h7x_mrw' called at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 242 
+[2025-09-05 13:34:08] OUT: at file "/home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts/target/stm32h7x.cfg", line 237 
+[2025-09-05 13:34:08] OUT: [stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+[2025-09-05 13:34:08] OUT: xPSR: 0x01000000 pc: 0x0800bcc4 msp: 0x24007e40 
+[2025-09-05 13:34:08] OUT:     TargetName         Type       Endian TapName            State 
+[2025-09-05 13:34:08] OUT: --  ------------------ ---------- ------ ------------------ ------------ 
+[2025-09-05 13:34:08] OUT:  0* stm32h7x.cpu0      hla_target little stm32h7x.cpu       halted 
+[2025-09-05 13:34:08] OUT:  
+[2025-09-05 13:34:08] OUT: [stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+[2025-09-05 13:34:08] OUT: xPSR: 0x01000000 pc: 0x0800bcc4 msp: 0x24007e40 
+[2025-09-05 13:34:08] OUT: Info : Unable to match requested speed 4000 kHz, using 3300 kHz 
+[2025-09-05 13:34:08] OUT: Info : Unable to match requested speed 4000 kHz, using 3300 kHz 
+[2025-09-05 13:34:08] OUT: Info : Device: STM32H74x/75x 
+[2025-09-05 13:34:08] OUT: Info : flash size probed value 2048k 
+[2025-09-05 13:34:08] OUT: Info : STM32H7 flash has dual banks 
+[2025-09-05 13:34:08] OUT: Info : Bank (0) size is 1024 kb, base address is 0x08000000 
+[2025-09-05 13:34:08] OUT: Info : Padding image section 0 at 0x08000298 with 8 bytes 
+[2025-09-05 13:34:08] OUT: Info : Padding image section 1 at 0x0803ca9c with 4 bytes 
+[2025-09-05 13:34:08] OUT: Info : Padding image section 2 at 0x0804b020 with 8 bytes 
+[2025-09-05 13:34:08] OUT: Info : Padding image section 3 at 0x0804c4f8 with 8 bytes (bank write end alignment) 
+[2025-09-05 13:34:08] OUT: Warn : Adding extra erase range, 0x0804c500 .. 0x0805ffff 
+[2025-09-05 13:34:13] OUT: auto erase enabled 
+[2025-09-05 13:34:13] OUT: wrote 312576 bytes from file /home/joeyw/zephyr-dev/build/h753zi/zephyr/zephyr.hex in 4.871534s (62.660 KiB/s) 
+[2025-09-05 13:34:13] OUT:  
+[2025-09-05 13:34:13] OUT:  
+[2025-09-05 13:34:13] OUT: FATAL ERROR: command exited with status 1: /home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/bin/openocd -s /home/joeyw/zephyr-dev/zephyr/boards/st/nucleo_h753zi/support -s /home/joeyw/zephyr-sdk-0.17.2/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts -f /home/joeyw/zephyr-dev/zephyr/boards/st/nucleo_h753zi/support/openocd.cfg '-c init' '-c targets' -c 'reset init' -c 'flash write_image erase /home/joeyw/zephyr-dev/build/h753zi/zephyr/zephyr.hex' -c 'reset run' -c shutdown 
+[2025-09-05 13:34:13] RC: 1
+[2025-09-05 13:34:13] WARN: west flash returned non-zero; continuing to serial anyway
+[2025-09-05 13:34:13] Opening serial /dev/ttyACM0 @ 115200
+[2025-09-05 13:34:13] SER: [m[8D[J[00:00:02.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[1;32muart:~$ [m[L6470 Poll] dev0=NO DATA dev1=NO DATA
+[2025-09-05 13:34:13] SER: [00:00:04.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [8D[J[L6470 Poll] dev0=NO DATA dev1=NO DATA
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[00:00:04.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[1;32muart:~$ [mStill waiting for IP address... (25 seconds remaining)
+[2025-09-05 13:34:13] SER: [L6470 Poll] dev0=NO DATA dev1=NO DATA
+[2025-09-05 13:34:13] SER: [00:00:06.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [8D[JStill waiting for IP address... (25 seconds remaining)
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[L6470 Poll] dev0=NO DATA dev1=NO DATA
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[00:00:06.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [1;32muart:~$ [m[8D[J[1;32muart:~$ [m[L6470 Poll] dev0=NO DATA dev1=NO DATA
+[2025-09-05 13:34:13] SER: [00:00:08.442,000] [0m<inf> main: L6470 poll: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:13] SER: [8D[J[L6470 Poll] dev0=NO Da
+[2025-09-05 13:34:14] SER: r
+[2025-09-05 13:34:14] SER: t
+[2025-09-05 13:34:15] SER: :
+[2025-09-05 13:34:16] SER: ~
+[2025-09-05 13:34:22] WARN: No prompt detected after connect; continuing
+[2025-09-05 13:34:22] CMD: kernel stacks
+[2025-09-05 13:34:23] SER: $ [m
+[2025-09-05 13:34:23] SER: [00:00:00.050,000] [0m<inf> phy_mii: PHY (0) ID 7C131[0m
+[2025-09-05 13:34:23] SER: [00:00:00.050
+[2025-09-05 13:34:23] SER: ,
+[2025-09-05 13:34:23] SER: 000] [0m<dbg> eth_stm32_hal: eth_initialize: MAC 02:80:e1:f5:86:7b[0m
+[2025-09-05 13:34:23] SER: [1;31m--- 5 messages dropped ---
+[2025-09-05 13:34:23] SER: [0m[00:00:00.052,000] [0m<inf> persist: flash area: off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:23] SER: [00:00:00.052,000] [1;33m<wrn> persist: fs_
+[2025-09-05 13:34:23] SER: mou
+[2025-09-05 13:34:23] SER: nt failed: -16, trying mkfs[0m
+[2025-09-05 13:34:23] SER: [00:00:00.052,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:23] SER: [00:00:00.228,000] [0m<inf> persist: mkfs succeeded, attempting remount[0m
+[2025-09-05 13:34:23] SER: [00:00:00.228,000] [1;31m<
+[2025-09-05 13:34:23] SER: e
+[2025-09-05 13:34:23] SER: rr> persist: fs_mount after mkfs failed: -16 (dev id=4)[0m
+[2025-09-05 13:34:23] SER: [00:00:00.228,000] [1;31m<err> persist: This suggests cache_size (256) may be incompatible with detected block_size[0m
+[2025-09-05 13:34:23] SER: 
+[2025-09-05 13:34:23] SER: === STM32H753ZI Zephyr Application Starting ===
+[2025-09-05 13:34:23] SER: Featur
+[2025-09-05 13:34:23] SER: e
+[2025-09-05 13:34:23] SER: s: TCP Echo Server, LED Heartbeat, VCP Serial
+[2025-09-05 13:34:23] SER: Board: Nucleo-H753ZI, Zephyr RTOS
+[2025-09-05 13:34:23] SER: [00:00:00.257,000] [0m<inf> main: Application startup complete[0m
+[2025-09-05 13:34:23] SER: [00:00:00.257,000] [0m<inf> persist: flash: write_block=32 erase=32 bytes alignment=32[
+[2025-09-05 13:34:23] SER: 0
+[2025-09-05 13:34:23] SER: m
+[2025-09-05 13:34:23] SER: [00:00:00.257,000] [0m<inf> persist: lfs cfg: read=32 prog=32 cache=256 lookahead=32[0m
+[2025-09-05 13:34:23] SER: [00:00:00.257,000] [0m<inf> persist: flash area: off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:23] SER: [00:00:00.257,000] [1;33m<wrn> persist: fs_mount failed: -16, try
+[2025-09-05 13:34:23] SER: ing mkfs[0m
+[2025-09-05 13:34:23] SER: [8D[J[1;31m[1;31m--- 5 messages dropped ---
+[2025-09-05 13:34:23] SER: [0m[m[00:00:00.050,000] [0m<inf> phy_mii: PHY (0) ID 7C131[00:00:00.257,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:23] SER: [0m
+[2025-09-05 13:34:23] SER: [1;3
+[2025-09-05 13:34:23] SER: 2m
+[2025-09-05 13:34:23] SER: uart:~$ [m[8D[J[00:00:00.050,000] [0m<dbg> eth_stm32_hal: eth_initialize: MAC 02:80:e1:f5:86:7b[00:00:00.427,000] [0m<inf> persist: mkfs succeeded, attempting remount[0m
+[2025-09-05 13:34:23] SER: [0m
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [0m<i
+[2025-09-05 13:34:23] CMD: kernel threads
+[2025-09-05 13:34:23] SER: nf> p
+[2025-09-05 13:34:23] SER: ersist: flash area: off=0x80000 size=0x80000[00:00:00.427,000] [1;31m<err> persist: fs_mount after mkfs failed: -16 (dev id=4)[0m
+[2025-09-05 13:34:23] SER: [0m
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [mkernel threads
+[2025-09-05 13:34:23] SER: kernel - Kernel commands
+[2025-09-05 13:34:23] SER: Subcommands:
+[2025-09-05 13:34:23] SER:   cycles     : Kernel 
+[2025-09-05 13:34:23] CMD: stepper persist smoke
+[2025-09-05 13:34:23] SER: cycles.
+[2025-09-05 13:34:23] SER:   h
+[2025-09-05 13:34:23] SER: eap       : System heap usage statistics.
+[2025-09-05 13:34:23] SER:   log_level  : <module name> <severity (0-4)>
+[2025-09-05 13:34:23] SER:   reboot     : Reboot.
+[2025-09-05 13:34:23] SER:   sleep      : ms
+[2025-09-05 13:34:23] SER:   thread     : Kernel threads.
+[2025-09-05 13:34:23] SER:   uptime     : Kernel uptime. Can be called with the -p or --pretty o
+[2025-09-05 13:34:23] SER: pt
+[2025-09-05 13:34:23] SER: ions
+[2025-09-05 13:34:23] SER:   version    : Kernel version.
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [mstepper persist smoke
+[2025-09-05 13:34:23] SER: settings: /lfs/settings/run not found (rc=-2)
+[2025-09-05 13:34:23] SER: active: axis0=17HS3001-20B, axis1=17HS3001-20B
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [1;33m<wrn> 
+[2025-09-05 13:34:23] CMD: stepper model set 0 17HS3001-20B
+[2025-09-05 13:34:23] SER: p
+[2025-09-05 13:34:23] SER: ersist: fs_mount failed: -16, trying mkfs[00:00:00.427,000] [1;31m<err> persist: This suggests cache_size (256) may be incompatible with detected block_size[0m
+[2025-09-05 13:34:23] SER: [0m
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [mstepper model set 0 17HS3001-20B
+[2025-09-05 13:34:23] SER: Axis 0 active model
+[2025-09-05 13:34:23] CMD: stepper persist dump
+[2025-09-05 13:34:23] SER:  se
+[2025-09-05 13:34:23] SER: t to 17HS3001-20B
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [mstepper persist dump
+[2025-09-05 13:34:23] SER: fs_stat failed for /lfs/settings/run: -2
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x8000persistence: in
+[2025-09-05 13:34:23] CMD: kernel reboot
+[2025-09-05 13:34:23] SER: it 
+[2025-09-05 13:34:23] SER: returned -16
+[2025-09-05 13:34:23] SER: [00:00:00.428,000] [1;33m<wrn> main: L6470 poll failed[0m
+[2025-09-05 13:34:23] SER: 0[0m
+[2025-09-05 13:34:23] SER: [1;32muart:~$ [mkernel
+[2025-09-05 13:34:25] SER: [m
+[2025-09-05 13:34:25] SER: [1;32muar
+[2025-09-05 13:34:25] SER: t
+[2025-09-05 13:34:26] SER: :
+[2025-09-05 13:34:27] SER: ~
+[2025-09-05 13:34:33] WARN: No prompt after reboot; waiting a bit more
+[2025-09-05 13:34:35] SER: $ [m[00:00:00.050,000] [0m<inf> phy_mii: PHY (0) ID 7C131[0m
+[2025-09-05 13:34:35] SER: [00:00:00.050,000] [0m<dbg> eth_stm32_hal: eth_initialize: MAC 02:80:e1:f5:86:7b[0m
+[2025-09-05 13:34:35] SER: [1;31m--- 5 messages dropped ---
+[2025-09-05 13:34:35] SER: [0m[00:00:00.052,000] [0m<inf> persist: flash area: off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:35] SER: [00:00:00.052,000] [1;33m<wrn> persist: fs_mount failed: -16, trying mkfs[0m
+[2025-09-05 13:34:35] SER: [00:00:00.052,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:35] SER: [00:00:00.229,000] [0m<inf> persist: mkfs succeeded, attempting remount[0m
+[2025-09-05 13:34:35] SER: [00:00:00.229,000] [1;31m<err> persist: fs_mount after mkfs failed: -16 (dev id=4)[0m
+[2025-09-05 13:34:35] SER: [00:00:00.229,000] [1;31m<err> persist: This suggests cache_size (256) may be incompatible with detected block_size[0m
+[2025-09-05 13:34:35] SER: 
+[2025-09-05 13:34:35] SER: === STM32H753ZI Zephyr Application Starting ===
+[2025-09-05 13:34:35] SER: Features: TCP Echo Server, LED Heartbeat, VCP Serial
+[2025-09-05 13:34:35] SER: Board: Nucleo-H753ZI, Zephyr RTOS
+[2025-09-05 13:34:35] SER: [00:00:00.263,000] [0m<inf> main: Application startup complete[0m
+[2025-09-05 13:34:35] SER: [00:00:00.263,000] [0m<inf> persist: flash: write_block=32 erase=32 bytes alignment=32[0m
+[2025-09-05 13:34:35] SER: [00:00:00.263,000] [0m<inf> persist: lfs cfg: read=32 prog=32 cache=256 lookahead=32[0m
+[2025-09-05 13:34:35] SER: [00:00:00.263,000] [0m<inf> persist: flash area: off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:35] SER: [00:00:00.263,000] [1;33m<wrn> persist: fs_mount failed: -16, trying mkfs[0m
+[2025-09-05 13:34:35] SER: [8D[J[1;31m[1;31m--- 5 messages dropped ---
+[2025-09-05 13:34:35] SER: [0m[m[00:00:00.050,000] [0m<inf> phy_mii: PHY (0) ID 7C131[00:00:00.263,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x80000[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.050,000] [0m<dbg> eth_stm32_hal: eth_initialize: MAC 02:80:e1:f5:86:7b[00:00:00.457,000] [0m<inf> persist: mkfs succeeded, attempting remount[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [0m<inf> persist: flash area: off=0x80000 size=0x80000[00:00:00.457,000] [1;31m<err> persist: fs_mount after mkfs failed: -16 (dev id=4)[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [1;33m<wrn> persist: fs_mount failed: -16, trying mkfs[00:00:00.457,000] [1;31m<err> persist: This s[0m
+[2025-09-05 13:34:35] SER: uggests cache_size (256) may be incompatible with detected block_size[0m
+[2025-09-05 13:34:35] SER: 
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.052,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x8000persistence: init returned -16
+[2025-09-05 13:34:35] SER: [00:00:00.457,000] [1;33m<wrn> main: L6470 poll failed[0m
+[2025-09-05 13:34:35] SER: 0[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.229,000] [0m<inf> persist: mkfs succeeded, attempting remoun=== LED Heartbeat thread started ===
+[2025-09-05 13:34:35] SER: t[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.229,000] [1;31m<err> persist: fs_mount after mkfs failed: -16 (dev id=4[00:00:00.457,000] [0m<inf> main: LED heartbeat started[0m
+[2025-09-05 13:34:35] SER: )[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.229,000] [1;31m<err> persist: This suggests cache_size (256) may be incompatible with detected block_sizL6470 statuses: dev0=0x0000 dev1=0x0000
+[2025-09-05 13:34:35] SER: e[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J
+[2025-09-05 13:34:35] SER: === STM32H753ZI Zephyr Application Starting[00:00:00.483,000] [0m<inf> main: L6470 statuses: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:35] SER:  ===
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JFeatures: TCP Echo Server, LED Heartbeat, VCP S=== Initializing Network Interface ===
+[2025-09-05 13:34:35] SER: erial
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JBoard: Nucleo-H753ZI, ZephyrInterface MAC: 02:80:e1:f5:86:7b
+[2025-09-05 13:34:35] SER:  RTOS
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.263,000] [0m<inf> main: Application startup complete[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.263,000] [0m<inf> persist: flash: write_block=32 erase=32 bytes alignment=3Ethernet link state: DOWN
+[2025-09-05 13:34:35] SER: 2[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.263,000] [0m<inf> persist: lfs cfg: read=32 prog=32 cache=256 lookahead=3Bringing interface up...
+[2025-09-05 13:34:35] SER: Starting DHCP client...
+[2025-09-05 13:34:35] SER: 2[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.263,000] [0m<inf> persist: flash area: off=0x80000 size=0x8000Waiting for IP address assignment (timeout: 30 seconds)...
+[2025-09-05 13:34:35] SER: 0[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.263,000] [1;33m<wrn> persist: fs_mount failed: -16, trying mkfs[00:00:00.650,000] [0m<inf> phy_mii: PHY (0) Link speed 100 Mb, full duplex[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8
+[2025-09-05 13:34:35] CMD: stepper model show 0
+[2025-09-05 13:34:35] SER: D[J[00:00:00.263,000] [0m<inf> persist: persist: erasing partition id=4 off=0x80000 size=0x80000[00:00:00.650,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_stop: Stopping ETH HAL driver[0m
+[2025-09-05 13:34:35] SER: [00:00:00.650,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_stop: HAL_ETH_Stop{_IT} returned error (Ethernet is already stopped)[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.457,000] [0m<inf> persist: mkfs succeeded, attempting remount[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.457,000] [1;31m<err> persist: fs_mount after mkfs failed: -16 (dev id=4)[00:00:00.651,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_start: Starting ETH HAL driver[0m
+[2025-09-05 13:34:35] SER: [0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.457,000] [1;31m<err> persist: This suggests cache_size (256) may be incompatible with detected block_siz*** Interface UP (carrier present) ***
+[2025-09-05 13:34:35] SER: [00:00:00.651,000] [0m<inf> main: Interface up[0m
+[2025-09-05 13:34:35] SER: e[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[Jpersistence: init returned -16
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.457,000] [1;33m<wrn> main: L6470 poll failed[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J=== LED Heartbeat thread started ===
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.457,000] [0m<inf> main: LED heartbeat started[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JL6470 statuses: dev0=0x0000 dev1=0x0000
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.483,000] [0m<inf> main: L6470 statuses: dev0=0x0000 dev1=0x0000[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J=== Initializing Network Interface ===
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JInterface MAC: 02:80:e1:f5:86:7b
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JEthernet link state: DOWN
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JBringing interface up...
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JStarting DHCP client...
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[JWaiting for IP address assignment (timeout: 30 seconds)...
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.650,000] [0m<inf> phy_mii: PHY (0) Link speed 100 Mb, full duplex[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.650,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_stop: Stopping ETH HAL driver[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.650,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_stop: HAL_ETH_Stop{_IT} returned error (Ethernet is already stopped)[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.651,000] [0m<dbg> eth_stm32_hal: eth_stm32_hal_start: Starting ETH HAL driver[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J*** Interface UP (carrier present) ***
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[00:00:00.651,000] [0m<inf> main: Interface up[0m
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m[8D[J[1;32muart:~$ [m[8D[J[1;32muart:~$ [ms
+[2025-09-05 13:34:35] CMD: stepper persist dump
+[2025-09-05 13:34:35] SER: tepper model show 0
+[2025-09-05 13:34:35] SER: 
+[2025-09-05 13:34:35] SER: Axis 0 active model: 17HS3001-20B (steps=200 max_speed=1200 mA=1200 micro=16)
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [mstepper persist dump
+[2025-09-05 13:34:35] SER: fs_stat failed for /lfs/settings/run: -2
+[2025-09-05 13:34:35] SER: [1;32muart:~$ [m
+[2025-09-05 13:34:35] SUCCESS: Flash+Try sequence completed

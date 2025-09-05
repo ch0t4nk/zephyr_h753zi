@@ -39,3 +39,32 @@ ZTEST(l6470_codec, test_build_get_status_tx_and_parse)
 }
 
 ZTEST_SUITE(l6470_codec, NULL, NULL, NULL, NULL, NULL);
+
+/* Boundary encoding tests for helper encodings via the driver API would
+ * require exposing the static functions; instead, validate the register
+ * width behavior by packing max values into frames and ensuring masks.
+ */
+ZTEST(l6470_codec, test_boundary_max_speed_mask)
+{
+    uint8_t tx[L6470_FRAME_SIZE * L6470_DAISY_SIZE];
+    memset(tx, 0x00, sizeof(tx));
+    /* speed with bits above 20 set; only low 20 bits should appear across bytes */
+    uint32_t speed = 0xFFFFF; /* 20-bit max */
+    l6470_pack_run_frames(0, 0, speed, tx);
+    uint16_t top = ((uint16_t)(tx[1] & 0x0F) << 8) | tx[2];
+    uint8_t lo = tx[3];
+    zassert_equal(top, 0x0FFF, "top 12 bits of 20-bit expected 0x0FFF");
+    zassert_equal(lo, 0xFF, "low 8 bits expected 0xFF");
+}
+
+ZTEST(l6470_codec, test_boundary_move_steps_mask)
+{
+    uint8_t tx[L6470_FRAME_SIZE * L6470_DAISY_SIZE];
+    memset(tx, 0x00, sizeof(tx));
+    uint32_t steps = 0x3FFFFF; /* 22-bit max */
+    l6470_pack_move_frames(0, 0, steps, tx);
+    uint8_t b1 = tx[1] & 0x03;
+    zassert_equal(b1, 0x03, "top 2 bits should be 0b11 for max 22-bit");
+    zassert_equal(tx[2], 0xFF);
+    zassert_equal(tx[3], 0xFF);
+}

@@ -5,6 +5,11 @@
 #include <stdbool.h>
 #include "l6470.h"
 #include "stepper_models.h"
+#include "status_poll.h"
+#if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
+#include "persist.h"
+#include <zephyr/fs/fs.h>
+#endif
 
 LOG_MODULE_REGISTER(shell_stepper, LOG_LEVEL_INF);
 
@@ -282,6 +287,125 @@ static int cmd_stepper_limits(const struct shell *shell, size_t argc, char **arg
     return 0;
 }
 
+#if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
+static int cmd_stepper_persist(const struct shell *shell, size_t argc, char **argv)
+{
+    if (argc < 2) {
+        shell_print(shell, "Usage: stepper persist <status|dump [path]|clear [path]>");
+        return -EINVAL;
+    }
+    if (strcmp(argv[1], "status") == 0) {
+        /* Prints via printk() */
+        persistence_status_print();
+        return 0;
+    } else if (strcmp(argv[1], "dump") == 0) {
+        const char *path = (argc > 2) ? argv[2] : CONFIG_SETTINGS_FILE_PATH;
+        struct fs_dirent ent;
+        int rc = fs_stat(path, &ent);
+        if (rc) {
+            shell_print(shell, "fs_stat failed for %s: %d", path, rc);
+            return rc;
+        }
+        shell_print(shell, "file: %s size=%d type=%s", path, (int)ent.size,
+                    ent.type == FS_DIR_ENTRY_FILE ? "file" : "other");
+        struct fs_file_t f;
+        fs_file_t_init(&f);
+        rc = fs_open(&f, path, FS_O_READ);
+        if (rc) {
+            shell_print(shell, "open failed: %d", rc);
+            return rc;
+        }
+        uint8_t buf[128];
+        ssize_t rd = fs_read(&f, buf, sizeof(buf));
+        fs_close(&f);
+        if (rd < 0) {
+            shell_print(shell, "read failed: %d", (int)rd);
+            return (int)rd;
+        }
+        shell_print(shell, "first %d bytes:", (int)rd);
+        for (int i = 0; i < rd; i += 16) {
+            char line[80];
+            int off = 0;
+            off += snprintk(line, sizeof(line), "%04x: ", i);
+            for (int j = 0; j < 16 && (i + j) < rd; j++) {
+                off += snprintk(line + off, sizeof(line) - off, "%02x ", buf[i + j]);
+            }
+            shell_print(shell, "%s", line);
+        }
+        return 0;
+    } else if (strcmp(argv[1], "clear") == 0) {
+        const char *path = (argc > 2) ? argv[2] : CONFIG_SETTINGS_FILE_PATH;
+        int rc = fs_unlink(path);
+        if (rc) {
+            shell_print(shell, "unlink %s failed: %d", path, rc);
+            return rc;
+        }
+        shell_print(shell, "cleared %s", path);
+        return 0;
+    } else if (strcmp(argv[1], "smoke") == 0) {
+        /* 1) Mount status */
+        persistence_status_print();
+        /* 2) Settings file info */
+        const char *path = (argc > 2) ? argv[2] : CONFIG_SETTINGS_FILE_PATH;
+        struct fs_dirent ent;
+        int rc = fs_stat(path, &ent);
+        if (rc == 0) {
+            shell_print(shell, "settings: %s size=%d type=%s", path, (int)ent.size,
+                        ent.type == FS_DIR_ENTRY_FILE ? "file" : "other");
+        } else {
+            shell_print(shell, "settings: %s not found (rc=%d)", path, rc);
+        }
+        /* 3) Active models */
+        const stepper_model_t *m0 = stepper_get_active(0);
+        const stepper_model_t *m1 = stepper_get_active(1);
+        shell_print(shell, "active: axis0=%s, axis1=%s",
+                    m0 ? m0->name : "(none)", m1 ? m1->name : "(none)");
+        return 0;
+    }
+    shell_print(shell, "Unknown subcommand. Usage: stepper persist <status|dump [path]|clear [path]|smoke [path]>");
+    return -EINVAL;
+}
+#endif
+
+static int cmd_stepper_poll(const struct shell *shell, size_t argc, char **argv)
+{
+#if !defined(CONFIG_STEPPER_STATUS_POLL)
+    shell_print(shell, "Status poll not built-in. Enable CONFIG_STEPPER_STATUS_POLL.");
+    return -ENOTSUP;
+#else
+    if (argc < 2) {
+        shell_print(shell, "Usage: stepper poll enable|disable|dump <dev> [n]");
+        return -EINVAL;
+    }
+    if (strcmp(argv[1], "enable") == 0) {
+        stepper_poll_set_enabled(true);
+        shell_print(shell, "poll: enabled");
+        return 0;
+    } else if (strcmp(argv[1], "disable") == 0) {
+        stepper_poll_set_enabled(false);
+        shell_print(shell, "poll: disabled");
+        return 0;
+    } else if (strcmp(argv[1], "dump") == 0) {
+        if (argc < 3) {
+            shell_print(shell, "Usage: stepper poll dump <dev> [n]");
+            return -EINVAL;
+        }
+        uint8_t dev = (uint8_t)atoi(argv[2]);
+        uint8_t n = (argc > 3) ? (uint8_t)atoi(argv[3]) : 8;
+        uint16_t tmp[64];
+        if (n > 64) n = 64;
+        uint8_t got = stepper_poll_get_recent(dev, n, tmp);
+        shell_print(shell, "recent[%u]: %u samples", dev, got);
+        for (uint8_t i = 0; i < got; i++) {
+            shell_print(shell, "  %u: 0x%04x (%s)", i, tmp[i], l6470_decode_status(tmp[i]));
+        }
+        return 0;
+    }
+    shell_print(shell, "Unknown poll command");
+    return -EINVAL;
+#endif
+}
+
 static int cmd_stepper_models_list(const struct shell *shell, size_t argc, char **argv)
 {
     unsigned int cnt = stepper_get_model_count();
@@ -356,7 +480,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(stepper_cmds,
     SHELL_CMD(disable, NULL, "Disable outputs: disable <dev> [hard]", cmd_stepper_disable),
     SHELL_CMD(limits, NULL, "Show configured L6470 safety limits", cmd_stepper_limits),
     SHELL_CMD(power, NULL, "Power control: power on|off|status", cmd_stepper_power),
+    SHELL_CMD(poll, NULL, "Status poll: enable|disable|dump <dev> [n]", cmd_stepper_poll),
     SHELL_CMD(model, &models_cmds, "Stepper model commands (list/show/set)", NULL),
+#if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
+    SHELL_CMD(persist, NULL, "Persistence helpers: persist status", cmd_stepper_persist),
+#endif
     SHELL_SUBCMD_SET_END
 );
 

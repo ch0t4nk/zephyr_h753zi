@@ -1,0 +1,23 @@
+/* Define LittleFS in fstab but disable automount (manual mounting in persist.c) */
+
+/ {
+    zephyr,fstab {
+        compatible = "zephyr,fstab";
+
+        lfs {
+            compatible = "zephyr,fstab,littlefs";
+            mount-point = "/lfs";
+            partition = <&app_storage>;
+            /* LittleFS geometry (aligned to STM32H7 requirements) */
+            read-size = <32>;
+            prog-size = <32>;
+            cache-size = <1024>;
+            /* Lookahead must be a multiple of 8; 32 tracks 256 blocks */
+            lookahead-size = <32>;
+            /* Wear leveling cycles; -1 disables. Use a typical value. */
+            block-cycles = <512>;
+            /* Disable automount - we handle mounting manually in persist.c */
+            /* automount; */
+        };
+    };
+};

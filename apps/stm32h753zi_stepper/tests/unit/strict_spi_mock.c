@@ -1,6 +1,7 @@
 #if defined(CONFIG_ZTEST)
 #include <zephyr/drivers/spi.h>
 #include <zephyr/ztest.h>
+#include <string.h>
 #include "l6470.h"
 
 /* Strict SPI mock for daisy-chain L6470: validates full TX buffer for

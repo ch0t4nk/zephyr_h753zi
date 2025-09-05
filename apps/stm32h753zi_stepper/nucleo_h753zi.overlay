@@ -37,9 +37,22 @@
     };
 };
 
+/*
+ * Define an application-specific storage partition placed high in flash.
+ * Rationale:
+ * - The board's default "storage" partition sits at 0x00020000 (128KB),
+ *   which overlaps with our application image when booting from 0x08000000.
+ * - LittleFS also requires at least two erase blocks; STM32H7 erase block
+ *   is 128KB, so we allocate 256KB (2 blocks) for the FS.
+ * - This keeps persistence safe from firmware writes.
+ */
 &flash0 {
-    /* Rely on the board's canonical `storage` partition defined in
-     * the nucleo_h753zi board DTS (offset 0x00020000, 128KB). Removing
-     * the app-level partition avoids duplicate labels and flash conflicts.
-     */
+    partitions {
+        /* Place app_storage within Bank 0 at 512KB offset
+         * to ensure compatibility (Bank 1 may have access restrictions) */
+        app_storage: partition@80000 {
+            label = "app-storage";
+            reg = <0x00080000 0x00080000>; /* 512KB at 0x0008_0000 */
+        };
+    };
 };
