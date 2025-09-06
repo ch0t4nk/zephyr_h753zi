@@ -248,6 +248,27 @@ static uint8_t l6470_encode_stall_th_ma(uint32_t ma)
     return (uint8_t)steps;
 }
 
+/* Runtime arming gate: when false, motion commands (run/move/goto*) are rejected with -EACCES.
+ * This is a higher-level safety distinct from power enable. Power may be ON but motion
+ * disallowed until explicitly armed by operator. Defaults to false at boot.
+ */
+static bool g_motion_armed;
+
+void l6470_motion_set_armed(bool armed) { g_motion_armed = armed; }
+bool l6470_motion_is_armed(void) { return g_motion_armed; }
+
+int l6470_motion_estop(void)
+{
+    /* Issue HARD STOP to each device, then (optionally) disable outputs (HiZ). */
+    for (uint8_t dev = 0; dev < L6470_DAISY_SIZE; dev++) {
+        (void)l6470_hardstop(dev);
+        (void)l6470_disable_outputs(dev, true);
+    }
+    g_motion_armed = false;
+    LOG_WRN("Emergency stop: motion disarmed");
+    return 0;
+}
+
 /* Apply a subset of model parameters: microstep (STEP_MODE), KVALs, and OCD threshold */
 int l6470_apply_model_params(uint8_t dev, const stepper_model_t *m)
 {
@@ -629,6 +650,10 @@ int l6470_run(uint8_t dev, uint8_t dir, uint32_t speed)
         LOG_WRN("Attempt to run while power disabled");
         return -EACCES;
     }
+    if (!g_motion_armed) {
+        LOG_WRN("Attempt to run while motion disarmed");
+        return -EACCES;
+    }
     /* Enforce configured maximum speed from active model if available, else Kconfig */
     const stepper_model_t *m = get_active_model_for_dev(dev);
     if (m) {
@@ -705,6 +730,10 @@ int l6470_move(uint8_t dev, uint8_t dir, uint32_t steps)
 {
     if (!pwr_enabled) {
         LOG_WRN("Attempt to move while power disabled");
+        return -EACCES;
+    }
+    if (!g_motion_armed) {
+        LOG_WRN("Attempt to move while motion disarmed");
         return -EACCES;
     }
     /* Enforce per-command step limit from active model if available, else Kconfig */

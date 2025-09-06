@@ -74,7 +74,7 @@ static int cmd_stepper_run(const struct shell *shell, size_t argc, char **argv)
         return ret;
     }
     if (ret == -EACCES) {
-        shell_print(shell, "run: power disabled - enable with 'stepper power on'");
+    shell_print(shell, "run: power or arm disabled - 'stepper power on' + 'stepper arm on'");
         return ret;
     }
     if (ret == -EFAULT) {
@@ -102,7 +102,7 @@ static int cmd_stepper_move(const struct shell *shell, size_t argc, char **argv)
         return ret;
     }
     if (ret == -EACCES) {
-        shell_print(shell, "move: power disabled - enable with 'stepper power on'");
+    shell_print(shell, "move: power or arm disabled - 'stepper power on' + 'stepper arm on'");
         return ret;
     }
     if (ret == -EFAULT) {
@@ -171,7 +171,7 @@ static int cmd_stepper_goto(const struct shell *shell, size_t argc, char **argv)
     int dev = atoi(argv[1]);
     uint32_t pos = (uint32_t)strtoul(argv[2], NULL, 0);
     int r = l6470_goto((uint8_t)dev, pos);
-    if (r == -EACCES) shell_print(shell, "goto: power disabled - 'stepper power on'");
+    if (r == -EACCES) shell_print(shell, "goto: power or arm disabled - 'stepper power on' + 'stepper arm on'");
     else if (r) shell_warn(shell, "goto failed: %d", r);
     return r;
 }
@@ -186,7 +186,7 @@ static int cmd_stepper_goto_dir(const struct shell *shell, size_t argc, char **a
     int dir = atoi(argv[2]);
     uint32_t pos = (uint32_t)strtoul(argv[3], NULL, 0);
     int r = l6470_goto_dir((uint8_t)dev, (uint8_t)dir, pos);
-    if (r == -EACCES) shell_print(shell, "goto_dir: power disabled - 'stepper power on'");
+    if (r == -EACCES) shell_print(shell, "goto_dir: power or arm disabled - 'stepper power on' + 'stepper arm on'");
     else if (r) shell_warn(shell, "goto_dir failed: %d", r);
     return r;
 }
@@ -199,7 +199,7 @@ static int cmd_stepper_home(const struct shell *shell, size_t argc, char **argv)
     }
     int dev = atoi(argv[1]);
     int r = l6470_go_home((uint8_t)dev);
-    if (r == -EACCES) shell_print(shell, "home: power disabled - 'stepper power on'");
+    if (r == -EACCES) shell_print(shell, "home: power or arm disabled - 'stepper power on' + 'stepper arm on'");
     else if (r) shell_warn(shell, "home failed: %d", r);
     return r;
 }
@@ -285,6 +285,86 @@ static int cmd_stepper_limits(const struct shell *shell, size_t argc, char **arg
     shell_print(shell, "  max_steps_per_command  = %u", l6470_get_max_steps_per_command());
     shell_print(shell, "  max_microstep          = %u", l6470_get_max_microstep());
     return 0;
+}
+
+static int cmd_stepper_arm(const struct shell *shell, size_t argc, char **argv)
+{
+    if (argc < 2) {
+        shell_print(shell, "Usage: stepper arm on|off|status");
+        return -EINVAL;
+    }
+    if (strcmp(argv[1], "on") == 0) {
+        l6470_motion_set_armed(true);
+        shell_print(shell, "Motion armed");
+        return 0;
+    } else if (strcmp(argv[1], "off") == 0) {
+        l6470_motion_set_armed(false);
+        shell_print(shell, "Motion disarmed");
+        return 0;
+    } else if (strcmp(argv[1], "status") == 0) {
+        shell_print(shell, "Motion: %s", l6470_motion_is_armed() ? "ARMED" : "DISARMED");
+        return 0;
+    }
+    shell_print(shell, "Unknown arm command");
+    return -EINVAL;
+}
+
+static int cmd_stepper_estop(const struct shell *shell, size_t argc, char **argv)
+{
+    ARG_UNUSED(argc); ARG_UNUSED(argv);
+    int r = l6470_motion_estop();
+    if (r == 0) shell_print(shell, "Emergency stop executed; motion disarmed");
+    else shell_warn(shell, "estop failed: %d", r);
+    return r;
+}
+
+static int cmd_stepper_kval(const struct shell *shell, size_t argc, char **argv)
+{
+    if (argc < 2) {
+        shell_print(shell, "Usage: stepper kval get|set <run|hold|acc|dec> [value]");
+        return -EINVAL;
+    }
+    if (strcmp(argv[1], "get") == 0) {
+        /* We read back by reapplying model structures; currently no direct read; show model values */
+        const stepper_model_t *m0 = stepper_get_active(0);
+        if (m0) {
+            shell_print(shell, "axis0: run=%d hold=%d acc=%d dec=%d", m0->kval_run, m0->kval_hold, m0->kval_acc, m0->kval_dec);
+        }
+        const stepper_model_t *m1 = stepper_get_active(1);
+        if (m1) {
+            shell_print(shell, "axis1: run=%d hold=%d acc=%d dec=%d", m1->kval_run, m1->kval_hold, m1->kval_acc, m1->kval_dec);
+        }
+        return 0;
+    } else if (strcmp(argv[1], "set") == 0) {
+        if (argc < 4) {
+            shell_print(shell, "Usage: stepper kval set <run|hold|acc|dec> <value>");
+            return -EINVAL;
+        }
+        const char *field = argv[2];
+        int val = atoi(argv[3]);
+        if (val < 0 || val > 255) {
+            shell_print(shell, "KVAL out of range (0..255)");
+            return -ERANGE;
+        }
+        /* Adjust active models in RAM (non-persistent). */
+        for (int axis = 0; axis < 2; axis++) {
+            stepper_model_t *m = (stepper_model_t *)stepper_get_active(axis);
+            if (!m) continue;
+            if (strcmp(field, "run") == 0) m->kval_run = val;
+            else if (strcmp(field, "hold") == 0) m->kval_hold = val;
+            else if (strcmp(field, "acc") == 0) m->kval_acc = val;
+            else if (strcmp(field, "dec") == 0) m->kval_dec = val;
+        }
+        /* Reapply to both devices */
+        const stepper_model_t *m0 = stepper_get_active(0);
+        const stepper_model_t *m1 = stepper_get_active(1);
+        if (m0) (void)l6470_apply_model_params(0, m0);
+        if (m1) (void)l6470_apply_model_params(1, m1);
+        shell_print(shell, "KVAL %s set to %d (reapplied)", field, val);
+        return 0;
+    }
+    shell_print(shell, "Unknown kval subcommand");
+    return -EINVAL;
 }
 
 #if defined(CONFIG_SETTINGS_FILE) && defined(CONFIG_APP_LINK_WITH_FS)
@@ -479,6 +559,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(stepper_cmds,
     SHELL_CMD(waitbusy, NULL, "Block until not busy: waitbusy <dev> [timeout_ms] [poll_ms]", cmd_stepper_waitbusy),
     SHELL_CMD(disable, NULL, "Disable outputs: disable <dev> [hard]", cmd_stepper_disable),
     SHELL_CMD(limits, NULL, "Show configured L6470 safety limits", cmd_stepper_limits),
+    SHELL_CMD(arm, NULL, "Motion arm/disarm: arm on|off|status", cmd_stepper_arm),
+    SHELL_CMD(estop, NULL, "Emergency stop (hard stop + HiZ + disarm)", cmd_stepper_estop),
+    SHELL_CMD(kval, NULL, "Adjust/read KVALs: kval get|set <run|hold|acc|dec> [val]", cmd_stepper_kval),
     SHELL_CMD(power, NULL, "Power control: power on|off|status", cmd_stepper_power),
     SHELL_CMD(poll, NULL, "Status poll: enable|disable|dump <dev> [n]", cmd_stepper_poll),
     SHELL_CMD(model, &models_cmds, "Stepper model commands (list/show/set)", NULL),

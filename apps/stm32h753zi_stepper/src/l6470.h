@@ -81,6 +81,11 @@ int l6470_hardstop(uint8_t dev);
 int l6470_is_busy(uint8_t dev, bool *out_busy);
 int l6470_wait_while_busy(uint8_t dev, int32_t timeout_ms, int32_t poll_ms);
 
+/* Motion arming / emergency stop */
+void l6470_motion_set_armed(bool armed);
+bool l6470_motion_is_armed(void);
+int l6470_motion_estop(void);
+
 /* Place outputs in Hi-Z: soft or hard. hard=true -> HARDHIZ, hard=false -> SOFTHIZ
  * Returns 0 on success.
  */
