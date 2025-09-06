@@ -9,6 +9,8 @@
 # Build artifacts (top-level and nested)
 build/
 **/build/
+twister-out*/
+twister-post-clean/
 **/.ninja_* 
 **/CMakeFiles/
 **/CMakeCache.txt
