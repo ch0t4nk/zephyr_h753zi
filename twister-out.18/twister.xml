@@ -1,0 +1,8 @@
+<testsuites>
+	<testsuite name="native_sim/native" timestamp="2025-09-05T16:22:51.697944" time="0.01" tests="1" failures="0" errors="0" skipped="0">
+		<properties>
+			<property name="version" value="v4.2.0-31-g663da2302b04" />
+		</properties>
+		<testcase classname="native_sim/native:stm32h753zi_stepper.unit" name="stm32h753zi_stepper.unit" time="0.01" />
+	</testsuite>
+</testsuites>

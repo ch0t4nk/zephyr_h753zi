@@ -3,12 +3,23 @@
   #   - motor datasheet: Manufacturer PN 17HS3001-20B (torque/current/rating)
   #   - driver scaling: ST L6470 datasheet (MAX_SPEED 0.238 s/LSB; ACC/DEC 14.55 s^2/LSB; STALL_TH ~31mA/LSB)
   # verification: values below cross-checked to motor datasheet and L6470 scaling on 2025-09-04
+  sku: 17HS3001-20B
+  vendor: RobotDigg
+  datasheet_ref: apps/stm32h753zi_stepper/reference/Steppers/17HS3001-20B.pdf
+  datasheet_url: https://www.robotdigg.com/product/7
+  datasheet_pdf_url: https://robotdigg.com/upload/pdf/17HS3001-20B.pdf
+  verified_on: 2025-09-05
   steps_per_rev: 200
   max_speed: 1200      # steps/sec (verified safe with 1/16 microstepping; clamped by CONFIG_L6470_MAX_SPEED_STEPS_PER_SEC)
   max_current: 1200    # mA
   max_microstep: 16
   rated_voltage: 2.0   # V
   holding_torque: 0.4  # Nm
+  # Electrical (from datasheet):
+  phase_resistance_ohm: 1.7    # ±10% @ 20°C
+  phase_inductance_mH: 4.5     # ±20% @ 1kHz 1Vrms
+  # Derived from electricals:
+  time_constant_ms: 2.65       # L/R = 4.5mH / 1.7Ω ≈ 0.00265 s
   # L6470 init (derived from datasheet + conservative margins)
   use_microstep: 16
   kval_run: 24         # run PWM duty; start point validated on bench, adjust per load
@@ -19,12 +30,25 @@
   stall_thresh_ma: 800 # STALL_TH target ~0.8A -> enc 26
   acc_sps2: 1500       # steps/s^2 -> enc 0x67
   dec_sps2: 1500
+  # Encoded register values for traceability (do not affect build):
+  l6470_encodings:
+    step_mode_nibble: 4        # 1/16 -> 0x04
+    kval_run: 24               # direct value
+    ocd_th_steps: 4            # 1500mA / 375mA = 4
+    acc_reg: 103               # round(1500 / 14.55) = 103 -> 0x0067
+    dec_reg: 103               # same as ACC
+    max_speed_reg: 1023        # floor(1200/0.238)=5042 -> clamp to 10b max 1023 (0x03FF)
+    stall_th_steps: 26         # round((800+15)/31) ≈ 26 (0x1A)
 
 - name: NEMA23-HighTorque # Generic NEMA23
   # references:
   #   - representative motor datasheet (NEMA23 high torque class)
   #   - driver scaling: ST L6470 datasheet
   # verification: conservative values chosen; fine-tune KVAL/stall on bench
+  sku: NEMA23-HT
+  vendor: Generic
+  datasheet_ref: TODO-add-official-URL
+  verified_on: 2025-09-05
   steps_per_rev: 200
   max_speed: 2000      # steps/sec conservative cap; tune per mechanics
   max_current: 3000
@@ -40,3 +64,28 @@
   stall_thresh_ma: 1200 # initial stall detect threshold (mA), adjust to avoid false trips
   acc_sps2: 2500
   dec_sps2: 2500
+
+- name: 17HE24-2104S # NEMA17 (Stepperonline)
+  # references:
+  #   - motor datasheet: 17HE24-2104S
+  #   - driver scaling: ST L6470 datasheet
+  sku: 17HE24-2104S
+  vendor: Stepperonline
+  datasheet_ref: apps/stm32h753zi_stepper/reference/Steppers/17HE24-2104S.pdf
+  verified_on: 2025-09-05
+  steps_per_rev: 200
+  # NOTE: The numeric values below start from conservative defaults; refine after bench validation.
+  max_speed: 1200
+  max_current: 1200
+  max_microstep: 16
+  rated_voltage: 2.0
+  holding_torque: 0.4
+  use_microstep: 16
+  kval_run: 24
+  kval_acc: 24
+  kval_dec: 24
+  kval_hold: 12
+  ocd_thresh_ma: 1500
+  stall_thresh_ma: 800
+  acc_sps2: 1500
+  dec_sps2: 1500

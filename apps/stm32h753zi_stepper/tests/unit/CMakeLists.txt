@@ -15,9 +15,16 @@ set(GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 file(MAKE_DIRECTORY ${GEN_DIR})
 set(STEPPER_OUT ${GEN_DIR}/stepper_models_autogen.h)
 add_custom_command(
+    OUTPUT ${GEN_DIR}/.models_valid
+    COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/validate_stepper_models.py ${STEPPER_YML}
+    COMMAND ${CMAKE_COMMAND} -E touch ${GEN_DIR}/.models_valid
+    DEPENDS ${STEPPER_YML} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/validate_stepper_models.py
+    COMMENT "Validating stepper models YAML (unit tests)"
+)
+add_custom_command(
     OUTPUT ${STEPPER_OUT}
     COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/gen_stepper_models.py ${STEPPER_YML} ${STEPPER_OUT}
-    DEPENDS ${STEPPER_YML} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/gen_stepper_models.py
+    DEPENDS ${GEN_DIR}/.models_valid ${STEPPER_YML} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/gen_stepper_models.py
     COMMENT "Generating unit-test stepper models header"
 )
 add_custom_target(unit_gen_models DEPENDS ${STEPPER_OUT})

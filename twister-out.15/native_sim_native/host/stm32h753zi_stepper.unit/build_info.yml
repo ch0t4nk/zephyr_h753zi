@@ -1,0 +1,55 @@
+cmake:
+  application:
+    configuration-dir: '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit'
+    source-dir: '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit'
+  board:
+    name: 'native_sim'
+    path:
+     - '/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim'
+    qualifiers: 'native'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/joeyw/zephyr-dev/zephyr/dts/bindings'
+    files:
+     - '/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim.dts'
+    include-dirs:
+     - '/home/joeyw/zephyr-dev/modules/hal/ambiq/dts'
+     - '/home/joeyw/zephyr-dev/modules/hal/atmel/include'
+     - '/home/joeyw/zephyr-dev/modules/hal/bouffalolab/include'
+     - '/home/joeyw/zephyr-dev/modules/hal/bouffalolab/include/zephyr'
+     - '/home/joeyw/zephyr-dev/modules/hal/gigadevice/include'
+     - '/home/joeyw/zephyr-dev/modules/hal/microchip/include'
+     - '/home/joeyw/zephyr-dev/modules/hal/microchip/dts'
+     - '/home/joeyw/zephyr-dev/modules/hal/nuvoton/dts'
+     - '/home/joeyw/zephyr-dev/modules/hal/nxp/dts'
+     - '/home/joeyw/zephyr-dev/modules/hal/stm32/dts'
+     - '/home/joeyw/zephyr-dev/modules/hal/ti/dts'
+     - '/home/joeyw/zephyr-dev/zephyr/include'
+     - '/home/joeyw/zephyr-dev/zephyr/include/zephyr'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/common'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/vendor'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/rx'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/x86'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/xtensa'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/sparc'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/riscv'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/posix'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/arm64'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/arm'
+     - '/home/joeyw/zephyr-dev/zephyr/dts/arc'
+     - '/home/joeyw/zephyr-dev/zephyr/dts'
+  kconfig:
+    files:
+     - '/home/joeyw/zephyr-dev/zephyr/boards/native/native_sim/native_sim_defconfig'
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit/prj.conf'
+     - '/home/joeyw/zephyr-dev/twister-out/native_sim_native/host/stm32h753zi_stepper.unit/zephyr/misc/generated/extra_kconfig_options.conf'
+    user-files:
+     - '/home/joeyw/zephyr-dev/apps/stm32h753zi_stepper/tests/unit/prj.conf'
+  toolchain:
+    name: 'host'
+    path: ''
+  zephyr:
+    version: '4.2.0'
+    zephyr-base: '/home/joeyw/zephyr-dev/zephyr'
+version: '0.1.0'

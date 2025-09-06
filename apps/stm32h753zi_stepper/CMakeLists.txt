@@ -18,6 +18,14 @@ if(NOT PYTHON3_EXECUTABLE)
 endif()
 
 set(STEPPER_YML ${CMAKE_SOURCE_DIR}/stepper_models.yml)
+# Validate YAML before code generation
+add_custom_command(
+	OUTPUT ${CMAKE_SOURCE_DIR}/build/generated/.models_valid
+	COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/validate_stepper_models.py ${STEPPER_YML}
+	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/build/generated/.models_valid
+	DEPENDS ${STEPPER_YML} ${CMAKE_SOURCE_DIR}/scripts/validate_stepper_models.py
+	COMMENT "Validating stepper models YAML"
+)
 # Place generated files in the app-local build directory so unit/test builds
 # and top-level builds both find the file at: <app-root>/build/generated
 set(STEPPER_OUT ${CMAKE_SOURCE_DIR}/build/generated/stepper_models_autogen.h)
@@ -25,7 +33,7 @@ file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/generated)
 add_custom_command(
 		OUTPUT ${STEPPER_OUT}
 		COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/gen_stepper_models.py ${STEPPER_YML} ${STEPPER_OUT}
-		DEPENDS ${STEPPER_YML} ${CMAKE_SOURCE_DIR}/scripts/gen_stepper_models.py
+		DEPENDS ${CMAKE_SOURCE_DIR}/build/generated/.models_valid ${STEPPER_YML} ${CMAKE_SOURCE_DIR}/scripts/gen_stepper_models.py
 		COMMENT "Generating stepper models header"
 )
 target_include_directories(app PRIVATE ${CMAKE_SOURCE_DIR}/build/generated)

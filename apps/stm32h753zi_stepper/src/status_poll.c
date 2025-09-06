@@ -50,8 +50,6 @@ static int poll_init(const struct device *unused)
 
 SYS_INIT(poll_init, APPLICATION, 50);
 
-/* TODO: expose shell commands to enable/disable and dump ring buffers */
-
 #endif /* CONFIG_STEPPER_STATUS_POLL */
 
 #if defined(CONFIG_STEPPER_STATUS_POLL)
