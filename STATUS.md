@@ -1,6 +1,6 @@
 # Project STATUS (primary context anchor)
 
-Generated: 2025-09-06 12:00 UTC
+Generated: 2025-09-06 13:30 UTC
 Owner: Joey W.  Repo: ch0t4nk/zephyr_h753zi
 
 ## Context Bootstrapping
@@ -10,73 +10,76 @@ STATUS.md is the primary context anchor for GitHub Copilot sessions; downstream 
 - Target: Zephyr app `apps/stm32h753zi_stepper` for Nucleo-H753ZI + X-NUCLEO-IHM02A1 (dual L6470 via SPI daisy-chain)
 - Workflow: west builds, native_sim unit tests (ztest/Twister), on-target flashing (OpenOCD / ST-LINK)
 - Model pipeline (SSOT): `stepper_models.yml` → `scripts/gen_stepper_models.py` → `stepper_models_autogen.h` → runtime driver apply
-- Key subsystems: L6470 driver (model param apply + motion + status), safety gating (power + arm + estop), fault gating (status-based), persistence (LittleFS + settings), Zephyr shell, automation tools
+- Key subsystems: L6470 driver (model param apply + motion + status), safety gating (power + arm + estop), fault gating (status-based), persistence (LittleFS + settings), shell, test harness & automation tools
 
-## Current status: OPERATIONAL
-- Builds (native_sim, nucleo_h753zi) succeed; Twister unit suite green (15/15 cases)
-- Safety: motion arming + estop; commands rejected when disarmed or faulted
-- Fault-path testing: deterministic via forced status injection hook
-- OCD tuning: helper encode/decode + shell `stepper ocd get|set <mA>` with persistence of requested mA
-- Persistence: active model indices + per-axis OCD thresholds stored in settings (LittleFS backend) and reloaded
-- Shell coverage: model select/list/show, run/move/goto*/home/stop/pos, status (verbose), power, arm, estop, limits, persist, ocd
-- Background polling: optional (disabled by default) diagnostic ring buffer
+## Current status: OPERATIONAL (OCD auto-apply stabilization IN PROGRESS)
+- Builds (native_sim, nucleo_h753zi) succeed.
+- Twister unit suite: all core driver/model tests green; new persisted OCD auto-apply test intermittently fails due to readiness timing (ordering of SPI mock vs settings apply).
+- Safety: motion arming & estop enforced; commands rejected when disarmed or faulted.
+- Fault-path testing deterministic via forced status injection hook.
+- Persistence: active model indices + per-axis requested OCD thresholds stored & loaded.
+- Shell: model mgmt, motion, positioning, status (verbose), power, arm, estop, limits, persist, OCD get/set.
+- Diagnostic ring buffer infrastructure present (polling optional / off by default).
 
 ## Recent achievements (2025-09-06)
-- Safety & fault gating: motion arm/estop + run/move rejection on faults
-- Forced status injection + global test fixture to eliminate state bleed
-- OCD threshold helpers (`l6470_calc_ocd_code`, `l6470_calc_ocd_trip_ma`) with unit tests
-- Shell OCD command (get/set) + automatic persistence
-- Persisted per-axis OCD requested thresholds (`stepper/ocd` settings key)
-- Extended model application test verifying OCD code generation across thresholds
-- Deflake: stabilized `stepper_models.test_switch_and_enforce` via forced clean statuses and tolerant error set
-- Removed unused static helper causing -Wunused-function build break
+- Added persisted OCD threshold reapply pipeline (settings→apply helper) with staged unit test.
+- Enhanced test SPI hook & readiness forcing; refined to avoid production logic relaxation.
+- Implemented OCD encode/decode helpers + shell integration & persistence.
+- Safety gating (arm/estop + fault rejection) and forced-status injection utilities stabilized.
+- Extended model parameter programming coverage (ACC/DEC/MAX_SPEED/STALL_TH) with encoding tests.
 
 ## Decisions
-- Fixed 4-byte SPI frames for deterministic multi-device I/O
-- Two-phase GET_STATUS (opcode then NOP frames) for daisy-chain reliability
-- Manual LittleFS mount before settings load; fstab automount disabled
-- Store user-requested OCD mA (not just encoded code) for round-trip clarity
-- Centralized encode helpers to prevent drift between tests and driver
-- Allow limited transient fault (-EFAULT) tolerance in one test until root cause isolated
+- Fixed 4-byte SPI frames for deterministic multi-device I/O.
+- Two-phase GET_STATUS pattern retained for daisy-chain reliability.
+- Manual LittleFS mount before settings load (fstab automount disabled) for explicit control.
+- Persist user-requested OCD mA (not just encoded code) for round-trip transparency.
+- Centralized encode helpers to avoid drift between driver & tests.
+- Allow limited transient fault (-EFAULT) tolerance in one enforcement test while root cause investigated.
 
 ## Tasks
 
 ### Completed
-- [x] Persistence infrastructure (2025-09-05) — LittleFS + settings + reboot validation — Owner: Joey W.
-- [x] STM32H7 flash geometry research (2025-09-05) — erase/write characteristics — Owner: Joey W.
+- [x] Persistence infrastructure (2025-09-05) — LittleFS + settings — Owner: Joey W.
 - [x] Flash/test automation (`tools/flash_try.py`) (2025-09-05) — Owner: Joey W.
-- [x] West workflow integration (2025-09-04) — docs + tasks — Owner: Joey W.
-- [x] Positioning API (goto/home/reset_pos/get_abs_pos/busy/stop) (2025-09-04) — Owner: Joey W.
-- [x] Extended param programming (ACC/DEC/MAX_SPEED/STALL_TH) (2025-09-04) — Owner: Joey W.
-- [x] Precise param encoding tests (2025-09-05) — Owner: Joey W.
+- [x] Extended param programming + encoding tests (2025-09-05) — Owner: Joey W.
 - [x] Safety gating + estop + fault rejection (2025-09-06) — Owner: Joey W.
 - [x] Forced status injection + isolation fixture (2025-09-06) — Owner: Joey W.
-- [x] OCD helpers + unit tests (2025-09-06) — Owner: Joey W.
-- [x] Shell OCD command + persistence (2025-09-06) — Owner: Joey W.
-- [x] Deflake of model enforcement test (2025-09-06) — Owner: Joey W.
+- [x] OCD helpers & shell persistence (2025-09-06) — Owner: Joey W.
+- [x] Initial persisted OCD auto-apply implementation & staged unit test (2025-09-06) — Owner: Joey W. (Stabilization pending)
 
 ### In progress
-- [ ] Real datasheet value population — transcribe accurate motor params into `stepper_models.yml` (Target: 2025-09-07, Owner: Joey W.)
-- [ ] Auto-apply persisted OCD thresholds at boot (currently stored & available; integration pass pending) (Target: 2025-09-07, Owner: Joey W.)
+- [ ] Persisted OCD auto-apply test stabilization (eliminate readiness race) (Target: 2025-09-07, Owner: Joey W.)
+- [ ] Real datasheet parameter transcription into `stepper_models.yml` (Target: 2025-09-07, Owner: Joey W.)
 
 ### Short-term roadmap
-- [ ] Advanced movement commands — `stepper jog`, `stepper waitpos` (Target: 2025-09-09, Owner: Joey W.)
-- [ ] Hardware validation suite — on-target smoke (power/status/move/persist/OCD) (Target: 2025-09-08, Owner: Joey W.)
-- [ ] Performance optimization — memory, SPI timing, priorities (Target: 2025-09-10, Owner: Joey W.)
-- [ ] Persisted OCD reload unit test (simulate settings load) (Target: 2025-09-08, Owner: Joey W.)
+- [ ] Deterministic test init: ensure SPI mock registers before settings reapply (Target: 2025-09-07)
+- [ ] Cleanup instrumentation (retain minimal assert-friendly logs) (Target: 2025-09-07)
+- [ ] Tighten OCD test assertions (exact write count) post-stability (Target: 2025-09-08)
+- [ ] Hardware validation suite (power/status/move/persist/OCD) (Target: 2025-09-08)
+- [ ] Advanced movement commands (`jog`, `waitpos`) (Target: 2025-09-09)
+- [ ] Performance optimization (memory, SPI timing, priorities) (Target: 2025-09-10)
+
+## Immediate next actions (focus list)
+1. Move SPI mock registration earlier (possible PRE_KERNEL init or split settings apply trigger) to guarantee readiness & capture writes.
+2. Add explicit printk in test helper confirming l6470_is_ready()=1 before apply (already partially added; verify appears every run).
+3. Once deterministic, downgrade noisy printk instrumentation to LOG_DBG or remove.
+4. Re-tighten assertions: require exactly one OCD write per axis stage.
+5. Add hardware smoke to verify on-target OCD register via GET_PARAM (future enhancement) or acceptance via status/fault behavior.
 
 ## Milestones
-- M0 Foundation — COMPLETE (2025-09-04) — driver core, positioning, shell
-- M1 Persistence — COMPLETE (2025-09-05) — LittleFS + settings
-- M1.5 Safety & OCD Tuning — COMPLETE (2025-09-06) — arming/estop, fault gating, OCD helpers & persistence
+- M0 Foundation — COMPLETE (2025-09-04)
+- M1 Persistence — COMPLETE (2025-09-05)
+- M1.5 Safety & OCD Tuning — COMPLETE (2025-09-06)
+- M1.6 Persisted OCD Auto-Apply — IMPLEMENTED (2025-09-06) / STABILIZATION IN PROGRESS (ETA 2025-09-07)
 - M2 Hardware validation — IN PROGRESS (Target: 2025-09-08)
 - M3 Production readiness — PLANNED (Target: 2025-09-12)
 - M4 Advanced features — PLANNED (Target: 2025-09-15)
 
 ## Known issues / Monitoring
-- MONITOR: Intermittent early fault (-EFAULT) in `stepper_models.test_switch_and_enforce`; currently tolerated; root cause under investigation
-- MONITOR: cbprintf buffer constraints; maintain ~1KB LittleFS cache to avoid memory pressure
-- MONITOR: Potential need for direct hardware GET_PARAM OCD verification command
+- FLAKY: `stepper_persist_ocd.test_persisted_ocd_auto_applied` intermittently misses OCD write due to readiness gate executing before SPI mock installed; fix: reorder init or relax gating only within test harness sequencing.
+- MONITOR: Intermittent early fault (-EFAULT) in `stepper_models.test_switch_and_enforce` (tolerated; suspect timing of forced status injection / stale state).
+- MONITOR: cbprintf buffer sizing & LittleFS cache (~1KB) to avoid memory pressure.
+- MONITOR: Potential need for direct hardware GET_PARAM OCD verification.
 - RESOLVED: LittleFS -16 (EBUSY) mount failures (2025-09-05)
 - RESOLVED: H7 flash geometry uncertainty (2025-09-05)
 - RESOLVED: OpenOCD SWD instability (2025-09-04) — mitigated by slower adapter speed
@@ -129,7 +132,7 @@ stepper ocd get|set <mA>
 - Tooling: `tools/flash_try.py`, tasks in `.vscode/tasks.json`
 
 ## Change log
-- 2025-09-06 — Safety gating, fault injection hooks, OCD helpers + shell/persistence, deflake
+- 2025-09-06 — Persisted OCD auto-apply (initial), safety gating, fault injection hooks, OCD helpers + shell/persistence, model enforcement test deflake
 - 2025-09-05 — LittleFS persistence operational; automation tool; parameter encoding tests
 - 2025-09-04 — Positioning APIs; extended parameter programming; shell & build stabilization
 - 2025-09-03 — Initial structure; L6470 driver foundation; model generation pipeline
