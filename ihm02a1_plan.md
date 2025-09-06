@@ -43,12 +43,14 @@ Updated plan reflecting current progress. Completed items are marked, with CLI e
 
 4. Safety and power sequencing (MED) — Done
    - What: RESET pulse support; refuse RUN/MOVE if power disabled or faults latched; enforce limits.
-   - Success: Commands are rejected on unsafe conditions; model/Kconfig limits enforced.
-   - Notes: VMOT is not switched on the shield; `power on` toggles software flag for safety gating.
+    - Success: Commands are rejected on unsafe conditions; model/Kconfig limits enforced; motion must be explicitly armed; estop halts & disarms.
+    - Notes: VMOT is not switched on the shield; `power on` toggles software flag; separate motion arming gate (`stepper arm on|off|status`); estop performs HARDSTOP + HiZ.
    - Est: 1–3 hours.
    - CLI:
      - `stepper power on|off|status`
      - `stepper reset`
+       - `stepper arm on|off|status`
+       - `stepper estop`
    - Recommendations: If adding hardware VMOT control (FET/relay), extend overlay + driver; surface clear-faults command and warn on active faults.
 
 5. Motor model SSOT (YAML) + codegen + runtime model API (HIGH) — Done
@@ -81,12 +83,8 @@ Updated plan reflecting current progress. Completed items are marked, with CLI e
      - Run tests: `./build/native_unit/zephyr/zephyr.exe`
    - Recommendations: Strict frame tests added for RUN/MOVE packers; SPI strict mock validates buffer length and opcodes. Next: add fault-path tests for GET_STATUS parsing (e.g., refuse RUN/MOVE when OCD/STEP_LOSS set).
 
-8. Dual-control wiring alternative: per-device CS (OPTIONAL) — CANCELLED - REMOVE
-   - What: Separate CS per chip instead of daisy chain.
-   - Status: Deferred; keeping default daisy-chain (single CS) for now.
-   - Notes: All SPI transfers remain multi-device; overlay reflects shared CS.
-   - Est: 2–4 hours (if needed).
-   - Recommendations: Only pursue after hardware rework (cut SB2/SB3, solder SB4/SB5); then update overlay/driver.
+8. Dual-control wiring alternative: per-device CS (OPTIONAL) — REMOVED
+   - Removed from active plan; daisy-chain confirmed sufficient. Reintroduce only if hardware rework occurs.
 
 9. Motion coordination / trajectories (LOW → MED) — Pending
    - What: Coordinated pan+tilt moves with accel profiles and trajectory planner.
@@ -105,6 +103,48 @@ Updated plan reflecting current progress. Completed items are marked, with CLI e
    - Success: CI green on PRs; autogen verified.
    - Est: 2–6 hours.
    - Recommendations: Cache Zephyr modules; validate YAML → autogen diff; artifact upload of unit test logs.
+
+12. Motion arming & estop gating (MED) — Done (2025-09-06)
+   - What: Separate operator-controlled motion enable plus emergency stop.
+   - Success: RUN/MOVE rejected with -EACCES when disarmed; estop halts motion and disarms.
+   - Notes: Complements power gating; enables safe parameter tuning with power on.
+   - CLI: `stepper arm on|off|status`, `stepper estop`.
+
+13. Fault-path test infrastructure (MED) — Done (2025-09-06)
+   - What: Deterministic forced status injection + global per-test fixture to reset state.
+   - Success: Tests can simulate faults (OCD/STEP_LOSS) and assert run/move rejection deterministically.
+   - Notes: Eliminates state bleed between tests; foundation for future fault suites.
+
+14. OCD threshold tuning (MED) — Done (2025-09-06)
+   - What: Helper encode/decode functions + shell `ocd get|set <mA>` with persistence of requested mA per axis.
+   - Success: Setting persists via settings backend and survives reboot; helper ensures consistent rounding/clamp.
+   - Notes: Stores user-requested mA, not just 4-bit code, for accurate round-trip display.
+   - CLI: `stepper ocd get`, `stepper ocd set 1500`.
+
+15. Deflake model enforcement test (LOW) — Done (2025-09-06)
+   - What: Stabilize intermittent early fault (-EFAULT) in model switching test.
+   - Success: Forced clean statuses before success attempt; broadened accepted result set pending deeper root cause analysis.
+
+16. Auto-apply persisted OCD thresholds at boot (MED) — In progress
+   - What: On settings load, override model default OCD thresholds prior to first parameter apply.
+   - Success (target): After reboot, `stepper ocd get` shows previously set values without manual reapply.
+   - Notes: Persistence already stores requested values; wiring to model application pending.
+
+17. Persisted OCD reload unit test (LOW) — Pending
+   - What: Simulate settings load path and assert applied OCD register code matches expectation.
+   - Success: Test passes under native_sim with mocked settings data.
+
+18. Advanced movement commands (MED) — Pending
+   - What: Jog / wait-for-position commands; simple trapezoidal planner.
+   - Success: `stepper jog <dev> <dir> <speed>` and `stepper waitpos <dev> <abs_pos>` functional; planner respects max accel/max speed.
+
+19. Hardware validation smoke suite (MED) — Pending
+   - What: Automated on-target script verifying power enable, model apply, OCD threshold persistence, basic motion.
+   - Success: Script returns zero; logs stored for CI artifact.
+
+20. Root cause analysis for sporadic early fault (LOW) — Pending
+   - What: Identify origin of intermittent -EFAULT during run attempts (timing vs. forced statuses vs. uninitialized state).
+   - Success: Deterministic reproduction & fix; test tightened to require r == 0.
 
 ---
 
